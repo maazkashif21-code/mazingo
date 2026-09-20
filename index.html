@@ -10,19 +10,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    /* Surfaces: warm pearl instead of sage, so green no longer fills the page */
+    /* Surfaces: warm pearl instead of green, so dark purple now anchors the page */
     --paper: #F0F2F4;
     --iridescent-edge: linear-gradient(90deg, #D5F3EC 0%, #DDD9F8 22%, #B7B2F0 45%, #F7DDEE 68%, #FCEBD6 100%);
     --paper-deep: #EAE7DC;
     --card: #FFFDF9;
 
     /* Text */
-    --ink: #1C2B22;
+    --ink: #1B1229;
     --ink-soft: #55665A;
 
-    /* Green: the anchor. Deep forest for solids, sage for quiet tints */
-    --forest: #1F4D3A;
-    --sage: #6F8F7C;
+    /* Purple: the anchor. Deep violet for solids, dusk for quiet tints */
+    --forest: #3D1F5C;
+    --sage: #6B5B8A;
 
     /* Iridescent: accent only (primary actions, key metrics, badges, underlines).
        Iridescent = the primary action and highlights. --iris-metal fills buttons and pills (ink text on top), --iris-vivid draws
@@ -32,7 +32,7 @@
     --iris-blue: #B7B2F0;
     --iris-metal: linear-gradient(100deg, #A6E3D6 0%, #B7B2F0 34%, #F0B6DC 68%, #F8D9B4 100%);
     --iris-soft: linear-gradient(100deg, #D5F3EC 0%, #DDD9F8 40%, #F7DDEE 75%, #FCEBD6 100%);
-    --iris-vivid: linear-gradient(90deg, #4FD1B5 0%, #8A7DF0 36%, #E56FC0 70%, #F6B15E 100%);
+    --iris-vivid: linear-gradient(90deg, #A68CF0 0%, #8A7DF0 36%, #E56FC0 70%, #F6B15E 100%);
     --iris-glow: linear-gradient(100deg, #86E8D0 0%, #ADA3FF 36%, #F79ED8 70%, #FBCF94 100%);
     --iris-wash: #F0EEFA;
     --iris-light: #DDD9F7;
@@ -51,7 +51,7 @@
     --silver-metal: linear-gradient(100deg, #F8F9FB 0%, #C8CDD4 26%, #EEF0F3 50%, #B0B6BE 76%, #E4E7EB 100%);
     --silver-soft: linear-gradient(180deg, #F7F8FA 0%, #DDE0E5 100%);
 
-    --line: rgba(28,43,34,0.14);
+    --line: rgba(27,18,41,0.14);
 
     --display: 'Space Mono', monospace;
     --mono: 'Space Mono', monospace;
@@ -374,15 +374,11 @@
   .hero-ctas .hero-cta-board{ background: var(--silver-metal);
     background-size: 200% 100%;
     background-position: 0% 50%; color: var(--ink); }
-  .hero-ctas .hero-cta-list{ background: var(--iris-metal);
+  .hero-ctas .hero-cta-bounty{ background: var(--iris-metal);
     background-size: 200% 100%;
     background-position: 0% 50%; color: var(--ink); }
-  .hero-ctas .hero-cta-bounty{ background: var(--crimson-gold);
-    background-size: 200% 100%;
-    background-position: 72% 50%; color: var(--paper); }
   .hero-ctas .hero-cta-board:hover{ background-position: 100% 50%; color: var(--ink); }
-  .hero-ctas .hero-cta-list:hover{ background-position: 100% 50%; }
-  .hero-ctas .hero-cta-bounty:hover{ background-position: 100% 50%; color: var(--paper); }
+  .hero-ctas .hero-cta-bounty:hover{ background-position: 100% 50%; color: var(--ink); }
   .trust-row{
     display:flex;
     align-items:center;
@@ -1193,7 +1189,7 @@
 
   /* ---------- SUCCESS OVERLAY ---------- */
   .success-overlay{
-    position: fixed; inset: 0; background: rgba(28,43,34,0.55);
+    position: fixed; inset: 0; background: rgba(27,18,41,0.55);
     display:none; align-items:center; justify-content:center; z-index: 100;
     padding: 20px;
   }
@@ -1363,8 +1359,8 @@
   padding: 4px 9px; border-radius: 7px; border: 1.5px solid;
   display:inline-block; white-space: nowrap;
 }
-.status-available{ color: var(--forest); border-color: var(--forest); background: rgba(31,77,58,0.08);
-  /* green halo: a soft ring plus a diffuse glow */
+.status-available{ color: var(--forest); border-color: var(--forest); background: rgba(61,31,92,0.08);
+  /* purple halo: a soft ring plus a diffuse glow */
   box-shadow: 0 0 0 3px rgba(46,140,96,0.16), 0 0 12px 2px rgba(46,140,96,0.38); }
 .status-claimed{ color: var(--crimson); border-color: var(--crimson); background: var(--crimson-tint);
   /* crimson halo */
@@ -1549,7 +1545,7 @@ body{ overflow-x: hidden; }
 
 /* ---- borrow / send-offer modal ---- */
 .modal-overlay{
-  position: fixed; inset: 0; background: rgba(28,43,34,0.55);
+  position: fixed; inset: 0; background: rgba(27,18,41,0.55);
   display:none; align-items:center; justify-content:center; z-index: 200;
   padding: 20px;
 }
@@ -1687,9 +1683,9 @@ body{ overflow-x: hidden; }
   padding: 5px 11px; border-radius: 999px; border: 1.5px solid; white-space: nowrap;
   flex-shrink: 0; margin-top: 2px;
 }
-.cond-like-new{ color: var(--forest); border-color: var(--forest); background: rgba(31,77,58,0.08); }
+.cond-like-new{ color: var(--forest); border-color: var(--forest); background: rgba(61,31,92,0.08); }
 .cond-good{ color: var(--iris-deep); border-color: var(--iris-edge); background: var(--iris-tint); }
-.cond-well-used{ color: var(--ink-soft); border-color: var(--ink-soft); background: rgba(28,43,34,0.05); }
+.cond-well-used{ color: var(--ink-soft); border-color: var(--ink-soft); background: rgba(27,18,41,0.05); }
 
 .detail-description{ color: var(--ink-soft); font-size: 0.92rem; line-height: 1.6; margin: 0 0 18px; }
 
@@ -1778,17 +1774,22 @@ body{ overflow-x: hidden; }
 @media (prefers-reduced-motion: reduce){ .bounty-timer.urgent .bt-icon{ animation: none; } }
 
 /* ---------- BOUNTY (wish list) ---------- */
-.bounty-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 0 16px; }
+.bounty-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 0 16px; }
 .bounty-card{
   background: var(--card);
   border: 2px solid var(--ink);
   border-radius: 12px;
-  padding: 18px 18px 16px;
+  padding: 18px;
+  min-height: 220px;
   position: relative;
   display:flex; flex-direction:column;
+  cursor: pointer;
   transition: transform .15s ease, box-shadow .15s ease;
 }
 .bounty-card:hover{ transform: translateY(-4px); box-shadow: 6px 6px 0 var(--ink); }
+.bounty-card:focus-visible{ outline: 3px solid var(--ink); outline-offset: 3px; }
+.bounty-card .bounty-note,
+.bounty-card .bounty-facts{ display:none; }
 .bounty-card .pin{
   position:absolute; top:-9px; left: 22px;
   width: 16px; height: 16px; border-radius: 50%;
@@ -1825,7 +1826,7 @@ body{ overflow-x: hidden; }
 .bounty-budget{ font-family: var(--display); font-weight: 700; font-size: 1.15rem; }
 .bounty-budget small{ font-family: var(--mono); font-weight: 400; font-size: 0.72rem; color: var(--ink-soft); }
 .bounty-card.claimed{ background: var(--paper-deep); }
-.bounty-card.claimed .bounty-reward{ border-color: var(--ink-soft); color: var(--ink-soft); background: rgba(28,43,34,0.05); }
+.bounty-card.claimed .bounty-reward{ border-color: var(--ink-soft); color: var(--ink-soft); background: rgba(27,18,41,0.05); }
 
 /* post-a-wish panel */
 .bounty-post{
@@ -1898,15 +1899,13 @@ body{ overflow-x: hidden; }
   /* The sheen slides across the hero and primary buttons on hover */
   .btn-primary,
   .hero-ctas .hero-cta-board,
-  .hero-ctas .hero-cta-list,
   .hero-ctas .hero-cta-bounty{
     transition: transform .15s ease, box-shadow .15s ease, background-position .5s ease;
   }
   @media (prefers-reduced-motion: reduce){
     .btn-primary,
     .hero-ctas .hero-cta-board,
-    .hero-ctas .hero-cta-list,
-    .hero-ctas .hero-cta-bounty,
+      .hero-ctas .hero-cta-bounty,
     .msg-send{ transition: none; }
   }
   /* "See all" links are navigation, not conversion: keep them dark */
@@ -2016,9 +2015,9 @@ body{ overflow-x: hidden; }
   .earn-chart-total{ font-family:var(--mono); font-size:.68rem; opacity:.78; white-space:nowrap; }
   .earn-chart svg{ display:block; width:100%; height:auto; overflow:visible; }
   .earn-chart-grid{ stroke:currentColor; stroke-width:1; stroke-dasharray:3 6; opacity:.18; }
-  .earn-chart-line{ fill:none; stroke:var(--crimson); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
-  .earn-chart-area{ fill:var(--crimson); opacity:.16; }
-  .earn-chart-dot{ fill:var(--crimson); stroke:var(--paper); stroke-width:3; }
+  .earn-chart-line{ fill:none; stroke:#FF8C42; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+  .earn-chart-area{ fill:#FF8C42; opacity:.16; }
+  .earn-chart-dot{ fill:#FF8C42; stroke:var(--paper); stroke-width:3; }
   .earn-chart-labels{ display:flex; justify-content:space-between; margin-top:7px; font-family:var(--mono); font-size:.62rem; opacity:.72; }
 
   .profile-stats{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 22px 0; }
@@ -2080,6 +2079,20 @@ body{ overflow-x: hidden; }
   .switch input:checked + .track{ background: var(--forest); }
   .switch input:checked + .track::after{ transform: translateX(20px); background:#fff; }
 
+  /* Profile panels: collapse to 3 items with a More toggle */
+  .profile-panel.is-collapsed > .p-row:nth-of-type(n+4),
+  .profile-panel.is-collapsed .settings-list .set-row:nth-of-type(n+4){ display:none; }
+  .more-btn{
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    width:100%; margin-top:10px; padding:8px 14px;
+    font-family:var(--mono); font-size:0.78rem; font-weight:700;
+    color:var(--ink); background:var(--paper-deep); border:2px dashed var(--line);
+    border-radius:12px; cursor:pointer; transition:all .15s ease;
+  }
+  .more-btn:hover{ background:var(--silver-soft); border-style:solid; }
+  .more-btn::after{ content:' ▼'; }
+  .more-btn[aria-expanded="true"]::after{ content:' ▲'; }
+
   .profile-actions{ display:flex; gap:10px; flex-wrap:wrap; margin: 6px 0 46px; }
 
   @media (max-width: 900px){
@@ -2126,7 +2139,6 @@ Buy never.</span></h1>
       <p class="sub">The stuff you need is already sitting in someone's room. List it, lend it, and split the deposit — Mazingo handles the rest, from offer to check‑in.</p>
       <div class="hero-ctas">
         <a href="#" data-target="browse" class="btn btn-lg hero-cta hero-cta-board">BOARD</a>
-        <a href="#" data-target="list" class="btn btn-lg hero-cta hero-cta-list">LIST NOW</a>
         <a href="#" data-target="bounty" class="btn btn-lg hero-cta hero-cta-bounty">BOUNTY</a>
       </div>
       <div class="trust-row">
@@ -4762,7 +4774,8 @@ Buy never.</span></h1>
         </div>
       </div>
 
-      <p class="bounty-note" id="claimItemNote" style="margin:-8px 0 20px;"></p>
+      <p class="bounty-note" id="claimItemNote" style="margin:-8px 0 12px;"></p>
+      <div class="bounty-facts" id="claimItemFacts" style="display:flex; margin-bottom:20px;"></div>
 
       <div class="modal-section">
         <label class="modal-label">Your price</label>
@@ -4810,6 +4823,7 @@ Buy never.</span></h1>
   var nameEl = document.getElementById('claimItemName');
   var metaEl = document.getElementById('claimItemMeta');
   var noteEl = document.getElementById('claimItemNote');
+  var factsEl = document.getElementById('claimItemFacts');
   var priceInput = document.getElementById('claimPrice');
   var offerRow = document.getElementById('claimOfferRow');
   var tabs = document.getElementById('claimPriceTabs');
@@ -4839,6 +4853,10 @@ Buy never.</span></h1>
     nameEl.textContent = q('.bounty-title') || 'Bounty';
     metaEl.textContent = q('.bounty-meta');
     noteEl.textContent = q('.bounty-note');
+    factsEl.innerHTML = '';
+    card.querySelectorAll('.bounty-fact').forEach(function(fact){
+      factsEl.appendChild(fact.cloneNode(true));
+    });
     priceInput.value = bounty;
     msg.value = '';
     mode = 'bounty';
@@ -4856,11 +4874,24 @@ Buy never.</span></h1>
     document.body.style.overflow = '';
   }
 
+  document.querySelectorAll('.bounty-card').forEach(function(card){
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('role', 'button');
+    card.setAttribute('aria-label', 'View details for ' + (card.querySelector('.bounty-title')?.textContent.trim() || 'bounty'));
+  });
+
   document.addEventListener('click', function(e){
-    var btn = e.target.closest('.bounty-claim');
-    if (!btn || btn.disabled) return;
-    var card = btn.closest('.bounty-card');
+    var card = e.target.closest('.bounty-card');
     if (!card) return;
+    var btn = e.target.closest('.bounty-claim');
+    if (btn && btn.disabled) return;
+    e.preventDefault();
+    open(card);
+  });
+
+  document.addEventListener('keydown', function(e){
+    var card = e.target.closest && e.target.closest('.bounty-card');
+    if (!card || (e.key !== 'Enter' && e.key !== ' ')) return;
     e.preventDefault();
     open(card);
   });
@@ -4975,7 +5006,7 @@ Buy never.</span></h1>
   #mangoFabBadge.hidden{ display: none; }
 
   #msgScrim{
-    position: fixed; inset: 0; background: rgba(28,43,34,0.45);
+    position: fixed; inset: 0; background: rgba(27,18,41,0.45);
     opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 1250;
   }
   #msgScrim.open{ opacity: 1; pointer-events: auto; }
@@ -4983,7 +5014,7 @@ Buy never.</span></h1>
   #msgPanel{
     position: fixed; top: 0; right: 0; height: 100%; width: min(420px, 100%);
     background: var(--paper); border-left: 3px solid var(--ink);
-    box-shadow: -8px 0 0 rgba(28,43,34,0.12);
+    box-shadow: -8px 0 0 rgba(27,18,41,0.12);
     transform: translateX(105%); transition: transform .32s cubic-bezier(.22,.8,.3,1);
     z-index: 1300; display: flex; flex-direction: column;
     font-family: var(--body);
@@ -5367,5 +5398,35 @@ Buy never.</span></h1>
   document.addEventListener('DOMContentLoaded', tick);
 })();
 </script>
+
+<script>
+/* Collapse profile panels to 3 items with a More/Less toggle */
+(function(){
+  function initMore(){
+    document.querySelectorAll('#view-profile .profile-panel').forEach(function(panel){
+      var rows = Array.prototype.slice.call(panel.querySelectorAll('.p-row, .set-row'));
+      if (rows.length <= 3) return;
+      panel.classList.add('is-collapsed');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'more-btn';
+      btn.setAttribute('aria-expanded', 'false');
+      btn.textContent = 'More';
+      btn.addEventListener('click', function(){
+        var collapsed = panel.classList.toggle('is-collapsed');
+        btn.setAttribute('aria-expanded', String(!collapsed));
+        btn.textContent = collapsed ? 'More' : 'Less';
+      });
+      panel.appendChild(btn);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMore);
+  } else {
+    initMore();
+  }
+})();
+</script>
+
 </body>
 </html>
