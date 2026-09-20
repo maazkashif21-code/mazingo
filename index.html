@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claro — Product & Supplier Data, Trusted in Real Time</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F6F2;
+    --paper-dim:#EFEDE7;
+    --ink:#15161B;
+    --muted:#6B6C74;
+    --line:#E2E0D8;
+    --indigo:#4B3FF0;
+    --violet:#8A5CF5;
+    --indigo-deep:#372FD1;
+    --teal:#158A72;
+    --coral:#E4633F;
+    --radius-sm:6px;
+    --radius-lg:22px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Space Grotesk',sans-serif;
+    letter-spacing:-0.01em;
+    line-height:1.05;
+    margin:0;
+  }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 32px;
+  }
+  ::selection{ background:var(--indigo); color:#fff; }
+  :focus-visible{ outline:2px solid var(--indigo); outline-offset:3px; }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,246,242,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px;
+  }
+  .logo{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    display:flex; align-items:center; gap:9px;
+  }
+  .brand-logo{ display:block; height:auto; }
+  .nav-links{ display:flex; gap:36px; }
+  .nav-links a{
+    font-size:15px; color:var(--muted); font-weight:500;
+    transition:color .15s ease;
+  }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-cta{ display:flex; align-items:center; gap:22px; }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:11px 20px;
+    border-radius:var(--radius-sm);
+    font-weight:600; font-size:14.5px;
+    cursor:pointer; border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--ink); color:#fff; }
+  .btn-primary:hover{ background:var(--indigo); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--ink); }
+  @media (max-width:860px){ .nav-links{ display:none; } }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:44px 0 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .hero-copy{
+    max-width:640px;
+    margin-top:44px;
+    text-align:center;
+  }
+  .hero-copy .eyebrow{ justify-content:center; }
+  .hero-sub{ margin-left:auto; margin-right:auto; }
+  .hero-actions{ justify-content:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:13.5px; color:var(--teal); font-weight:600;
+    margin-bottom:20px;
+  }
+  .eyebrow::before{
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:var(--teal);
+    box-shadow:0 0 0 4px rgba(21,138,114,0.15);
+  }
+  .hero h1{
+    font-size:clamp(34px,5vw,58px);
+    font-weight:600;
+  }
+  .hero h1 em{ font-style:normal; color:var(--indigo); }
+  .hero-sub{
+    margin-top:22px;
+    font-size:18px;
+    line-height:1.55;
+    color:var(--muted);
+    max-width:560px;
+  }
+  .hero-actions{
+    margin-top:34px;
+    display:flex; gap:14px; align-items:center;
+  }
+  .hero-note{
+    font-size:13.5px; color:var(--muted);
+  }
+
+  /* ---------- FLOW DIAGRAM ---------- */
+  .flow-section{
+    width:100%;
+    margin-top:0;
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    background:#FFFFFF;
+    padding:38px 20px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .flow-caption{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:0 20px 22px;
+    flex-wrap:wrap; gap:8px;
+  }
+  .flow-caption .label{
+    font-size:13px; color:var(--muted); font-weight:500;
+  }
+  .flow-caption .label b{ color:var(--ink); }
+  .flow-svg-wrap{ width:100%; position:relative; }
+  .node-caption{
+    position:absolute;
+    left:49%;
+    top:58.5%;
+    pointer-events:none;
+  }
+  .node-caption .cap{
+    position:absolute;
+    left:0; top:0;
+    transform:translate(-50%,-50%) translateY(7px);
+    opacity:0;
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-weight:500;
+    font-size:clamp(10.5px,1.15vw,13px);
+    letter-spacing:0.01em;
+    white-space:nowrap;
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .node-caption .cap.active{
+    opacity:.88;
+    transform:translate(-50%,-50%) translateY(0);
+  }
+  svg.flow{ width:100%; height:auto; display:block; }
+
+  .node-label{
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    fill:var(--ink);
+  }
+  .node-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:15px;
+    font-weight:500;
+    fill:var(--indigo-deep);
+  }
+  .src-label{
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:500;
+    fill:var(--muted);
+  }
+  .flow-line{
+    fill:none;
+    stroke:var(--line);
+    stroke-width:1.6;
+  }
+  .flow-line.tangled{
+    stroke-width:1.3;
+    opacity:.72;
+  }
+  .flow-dot{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.08)); }
+  .claro-node rect{ }
+  .claro-word{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:20px;
+    fill:#fff;
+  }
+  .out-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:500;
+    font-size:17px;
+    fill:var(--ink);
+  }
+
+  /* ---------- LOGOS STRIP ---------- */
+  .strip{
+    padding:52px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .strip-label{
+    text-align:center;
+    font-size:13.5px;
+    color:var(--muted);
+    margin-bottom:26px;
+  }
+  .strip-row{
+    display:flex; justify-content:center; align-items:center;
+    gap:52px; flex-wrap:wrap;
+    filter:grayscale(1);
+    opacity:.55;
+  }
+  .strip-row span{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600; font-size:17px; color:var(--ink);
+  }
+
+  /* ---------- HOW IT WORKS ---------- */
+  .section{ padding:96px 0; }
+  .section-head{
+    max-width:620px;
+    margin-bottom:56px;
+  }
+  .section-head h2{
+    font-size:clamp(26px,3.4vw,38px);
+    font-weight:600;
+  }
+  .section-head p{
+    margin-top:14px;
+    font-size:16.5px;
+    color:var(--muted);
+    line-height:1.6;
+  }
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  .step{
+    padding:30px 26px 30px 0;
+    border-right:1px solid var(--line);
+  }
+  .step:last-child{ border-right:none; }
+  .step-index{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px; color:var(--indigo);
+    margin-bottom:18px;
+    display:block;
+  }
+  .step h3{
+    font-size:17.5px; font-weight:600; margin-bottom:10px;
+  }
+  .step p{
+    font-size:14.5px; line-height:1.6; color:var(--muted);
+  }
+  @media (max-width:900px){
+    .steps{ grid-template-columns:1fr 1fr; }
+    .step{ border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:26px 22px; }
+  }
+  @media (max-width:560px){
+    .steps{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- FEATURE CARDS ---------- */
+  .feature-grid{
+    display:grid;
+    grid-template-columns:1.15fr 1fr;
+    gap:22px;
+  }
+  .card{
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    background:#fff;
+    padding:34px;
+  }
+  .card-big{
+    grid-row:span 2;
+    display:flex; flex-direction:column; justify-content:space-between;
+    min-height:420px;
+    background:linear-gradient(160deg,var(--indigo),#241C7A);
+    color:#fff;
+    border:none;
+  }
+  .card-big h3{ font-size:23px; font-weight:600; max-width:380px; }
+  .card-big p{ margin-top:14px; color:rgba(255,255,255,.7); font-size:15px; line-height:1.6; max-width:360px; }
+  .mini-stats{ display:flex; gap:28px; margin-top:26px; }
+  .mini-stat b{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:500;
+  }
+  .mini-stat span{ font-size:12.5px; color:rgba(255,255,255,.55); }
+  .card h3{ font-size:18px; font-weight:600; }
+  .card p{ margin-top:10px; font-size:14.5px; color:var(--muted); line-height:1.6; }
+  .tag{
+    display:inline-block; font-size:12px; font-weight:600; color:var(--teal);
+    background:rgba(21,138,114,0.09); padding:5px 10px; border-radius:5px;
+    margin-bottom:16px;
+  }
+  .tag.alt{ color:var(--coral); background:rgba(228,99,63,0.1); }
+  @media (max-width:860px){
+    .feature-grid{ grid-template-columns:1fr; }
+    .card-big{ grid-row:auto; min-height:auto; }
+  }
+
+  /* ---------- CTA ---------- */
+  .cta{
+    background:var(--ink);
+    color:#fff;
+    border-radius:var(--radius-lg);
+    padding:64px 56px;
+    display:flex; justify-content:space-between; align-items:center; gap:40px;
+    flex-wrap:wrap;
+  }
+  .cta h2{ font-size:clamp(24px,3vw,34px); font-weight:600; max-width:480px; color:#fff; }
+  .cta p{ margin-top:12px; color:rgba(255,255,255,.6); font-size:15px; max-width:440px; }
+  .cta .btn-primary{ background:#fff; color:var(--ink); }
+  .cta .btn-primary:hover{ background:var(--teal); color:#fff; }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:48px 0 36px;
+  }
+  .foot-row{
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:16px;
+  }
+  .foot-links{ display:flex; gap:26px; }
+  .foot-links a{ font-size:13.5px; color:var(--muted); }
+  .foot-links a:hover{ color:var(--ink); }
+  .foot-copy{ font-size:13px; color:var(--muted); }
+
+  @media (prefers-reduced-motion: reduce){
+    * { animation-duration:0.001ms !important; animation-iteration-count:1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><img class="brand-logo" alt="Claro" width="104" height="25"></div>
+    <div class="nav-links">
+      <a href="#platform">Platform</a>
+      <a href="#how">How it works</a>
+      <a href="#customers">Customers</a>
+      <a href="#company">Company</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost" href="#login">Log in</a>
+      <a class="btn btn-primary" href="#demo">Book a demo</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="flow-section">
+      <div class="flow-caption">
+        <span class="label">Every format in <b>&mdash;</b> one trusted catalog out</span>
+        <span class="label"><b>&lt; 5 sec</b> from raw feed to matched record</span>
+      </div>
+      <div class="flow-svg-wrap">
+        <div class="node-caption" id="nodeCaption"><span class="cap active">Matching data points</span><span class="cap"></span></div>
+        <svg class="flow" viewBox="0 0 1040 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram: APIs, spreadsheets, PIMs, PDFs and code feeds flow into Claro, which outputs matched Products, Suppliers and Customers records.">
+          <defs>
+            <linearGradient id="nodeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#5B4CF6"/>
+              <stop offset="100%" stop-color="#8A5CF5"/>
+            </linearGradient>
+            <filter id="nodeShadow" x="-40%" y="-60%" width="180%" height="240%">
+              <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#4B3FF0" flood-opacity="0.28"/>
+            </filter>
+            <filter id="toWhite" x="-20%" y="-20%" width="140%" height="140%">
+              <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/>
+            </filter>
+          </defs>
+
+          <!-- connecting lines: sources -> claro -->
+          <path id="p1" class="flow-line tangled" d="M 96 40 C 175 40, 130 255, 275 218 C 330 204, 300 120, 400 165"/>
+          <path id="p2" class="flow-line tangled" d="M 96 108 C 185 108, 120 26, 255 52 C 335 67, 260 145, 400 172"/>
+          <path id="p3" class="flow-line tangled" d="M 96 176 C 235 176, 175 288, 305 252 C 365 235, 330 190, 400 169"/>
+          <path id="p4" class="flow-line tangled" d="M 96 244 C 205 244, 150 84, 290 104 C 355 113, 335 155, 400 176"/>
+          <path id="p5" class="flow-line tangled" d="M 96 300 C 225 300, 235 122, 325 158 C 365 174, 350 168, 400 179"/>
+
+          <!-- connecting lines: claro -> outputs -->
+          <path id="p6" class="flow-line" d="M 620 158 C 760 158, 780 55, 900 55"/>
+          <path id="p7" class="flow-line" d="M 620 170 C 740 170, 760 170, 900 170"/>
+          <path id="p8" class="flow-line" d="M 620 182 C 760 182, 780 285, 900 285"/>
+
+          <!-- source nodes -->
+          <g>
+            <rect x="20" y="16" width="76" height="48" rx="10" fill="#fff" stroke="#E2E0D8"/>
+            <text x="58" y="45" text-anchor="middle" class="src-label">API's</text>
+          </g>
+          <g>
+            <rect x="20" y="84" width="76" height="48" rx="10" fill="#fff" stroke="#E2E0D8"/>
+            <text x="58" y="113" text-anchor="middle" class="src-label">Sheets</text>
+          </g>
+          <g>
+            <rect x="20" y="152" width="76" height="48" rx="10" fill="#fff" stroke="#E2E0D8"/>
+            <text x="58" y="181" text-anchor="middle" class="src-label">PIM's</text>
+          </g>
+          <g>
+            <rect x="20" y="220" width="76" height="48" rx="10" fill="#fff" stroke="#E2E0D8"/>
+            <text x="58" y="249" text-anchor="middle" class="src-label">PDF's</text>
+          </g>
+          <g>
+            <rect x="20" y="276" width="76" height="48" rx="10" fill="#fff" stroke="#E2E0D8"/>
+            <text x="58" y="305" text-anchor="middle" class="src-label">Feeds</text>
+          </g>
+
+          <!-- claro node -->
+          <g class="claro-node" filter="url(#nodeShadow)">
+            <rect x="400" y="120" width="220" height="100" rx="18" fill="url(#nodeGrad)"/>
+            <image class="brand-logo-svg" x="440" y="132" width="140" height="33.7" filter="url(#toWhite)" preserveAspectRatio="xMidYMid meet"/>
+          </g>
+
+          <!-- output nodes -->
+          <g>
+            <rect x="900" y="28" width="120" height="56" rx="12" fill="#fff" stroke="#E2E0D8"/>
+            <rect x="900" y="28" width="3" height="56" rx="1.5" fill="#8A5CF5"/>
+            <text x="916" y="50" class="node-label">Products</text>
+            <text x="916" y="72" class="out-count" data-count="21650">0</text>
+          </g>
+          <g>
+            <rect x="900" y="143" width="120" height="56" rx="12" fill="#fff" stroke="#E2E0D8"/>
+            <rect x="900" y="143" width="3" height="56" rx="1.5" fill="#158A72"/>
+            <text x="916" y="165" class="node-label">Suppliers</text>
+            <text x="916" y="187" class="out-count" data-count="10800">0</text>
+          </g>
+          <g>
+            <rect x="900" y="258" width="120" height="56" rx="12" fill="#fff" stroke="#E2E0D8"/>
+            <rect x="900" y="258" width="3" height="56" rx="1.5" fill="#E4633F"/>
+            <text x="916" y="280" class="node-label">Customers</text>
+            <text x="916" y="302" class="out-count" data-count="15150">0</text>
+          </g>
+
+          <!-- traveling dots, sources -> claro (neutral: many raw formats, not yet classified) -->
+          <circle cx="96" cy="40" r="3.5" fill="#B7B5AC" class="flow-dot"><animateMotion dur="3.4s" begin="0s" repeatCount="indefinite"><mpath href="#p1"/></animateMotion></circle>
+          <circle cx="96" cy="108" r="3.5" fill="#B7B5AC" class="flow-dot"><animateMotion dur="3.4s" begin="0.5s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+          <circle cx="96" cy="176" r="3.5" fill="#B7B5AC" class="flow-dot"><animateMotion dur="3.4s" begin="1s" repeatCount="indefinite"><mpath href="#p3"/></animateMotion></circle>
+          <circle cx="96" cy="244" r="3.5" fill="#B7B5AC" class="flow-dot"><animateMotion dur="3.4s" begin="1.5s" repeatCount="indefinite"><mpath href="#p4"/></animateMotion></circle>
+          <circle cx="96" cy="300" r="3.5" fill="#B7B5AC" class="flow-dot"><animateMotion dur="3.4s" begin="2s" repeatCount="indefinite"><mpath href="#p5"/></animateMotion></circle>
+
+          <!-- traveling dots, claro -> outputs (colored: resolved into a category) -->
+          <circle cx="620" cy="158" r="4.5" fill="#8A5CF5" class="flow-dot"><animateMotion dur="2.6s" begin="0.2s" repeatCount="indefinite"><mpath href="#p6"/></animateMotion></circle>
+          <circle cx="620" cy="170" r="4.5" fill="#158A72" class="flow-dot"><animateMotion dur="2.6s" begin="0.9s" repeatCount="indefinite"><mpath href="#p7"/></animateMotion></circle>
+          <circle cx="620" cy="182" r="4.5" fill="#E4633F" class="flow-dot"><animateMotion dur="2.6s" begin="1.6s" repeatCount="indefinite"><mpath href="#p8"/></animateMotion></circle>
+        </svg>
+      </div>
+    </div>
+
+    <div class="hero-copy">
+      <span class="eyebrow">Live data operations layer</span>
+      <h1>Your catalog data, <em>trusted</em> the moment it moves.</h1>
+      <p class="hero-sub">Claro ingests supplier feeds from any format, resolves what's actually the same product, fills in what's missing, and writes clean records straight back into your systems — continuously, not once.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#demo">Book a demo</a>
+        <a class="btn btn-ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="strip">
+    <div class="wrap">
+      <p class="strip-label">In production across ticketing, quick-commerce, distribution and manufacturing catalogs</p>
+      <div class="strip-row">
+        <span>Northline</span><span>Ferro&nbsp;Supply</span><span>Vantree</span><span>Marisol</span><span>Deponet</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="how">
+    <div class="section-head">
+      <h2>One loop, run continuously</h2>
+      <p>Most catalog tools clean a dataset once and stop. Claro keeps resolving, validating and enriching every time a feed lands or a record drifts — so the catalog gets more accurate the longer it runs.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="step-index">01</span>
+        <h3>Ingest from any source</h3>
+        <p>Connect ERPs, PIMs, supplier portals, spreadsheets and PDFs. No migration, no fixed schema required upfront.</p>
+      </div>
+      <div class="step">
+        <span class="step-index">02</span>
+        <h3>Map, match, classify</h3>
+        <p>Align schemas, deduplicate records, and resolve the same product across suppliers into one stable ID.</p>
+      </div>
+      <div class="step">
+        <span class="step-index">03</span>
+        <h3>Fill gaps with confidence</h3>
+        <p>Missing attributes get enriched from approved sources, each value carrying a confidence score and its origin.</p>
+      </div>
+      <div class="step">
+        <span class="step-index">04</span>
+        <h3>Write back, continuously</h3>
+        <p>Approved records flow into ERP, PIM and search — and Claro keeps watching for drift after that.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="platform">
+    <div class="section-head">
+      <h2>Built around how your catalog actually breaks</h2>
+      <p>Not a generic LLM wrapper — a system tuned to your taxonomy, your validation rules and the messy reality of your suppliers.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="card card-big">
+        <div>
+          <span class="tag" style="color:#B9B2FF;background:rgba(255,255,255,.1);">Live example</span>
+          <h3>Claro flagged inconsistent units before they hit your storefront.</h3>
+          <p>12 records normalized from inches to millimeters, automatically, with the change logged and traceable.</p>
+        </div>
+        <div class="mini-stats">
+          <div class="mini-stat"><b>78,547</b><span>Parts tracked</span></div>
+          <div class="mini-stat"><b>30,253</b><span>Products resolved</span></div>
+          <div class="mini-stat"><b>14,547</b><span>Suppliers linked</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="tag">Confidence &amp; provenance</span>
+        <h3>Every value, traceable</h3>
+        <p>Each enriched attribute carries a confidence score and a link back to its source, so review is targeted instead of manual row-by-row checking.</p>
+      </div>
+      <div class="card">
+        <span class="tag alt">Exceptions</span>
+        <h3>Drift gets caught early</h3>
+        <p>When a supplier changes a spec or a feed goes stale, Claro raises it before it reaches your ERP or storefront.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="demo">
+    <div class="cta">
+      <div>
+        <h2>Turn catalog chaos into clarity</h2>
+        <p>Pilot Claro on one supplier flow or one category. 4&ndash;6 weeks. Measurable outcomes before any decision to expand.</p>
+      </div>
+      <a class="btn btn-primary" href="#book">Book a demo</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div class="logo" style="font-size:17px;"><img class="brand-logo" alt="Claro" width="84" height="20"></div>
+      <div class="foot-links">
+        <a href="#platform">Platform</a>
+        <a href="#customers">Customers</a>
+        <a href="#company">Company</a>
+        <a href="#faq">FAQ</a>
+        <a href="#privacy">Privacy</a>
+      </div>
+      <span class="foot-copy">&copy; Claro 2026</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Brand mark, embedded once and reused for the nav, footer and hero diagram
+  // so the real logo only ships as a single base64 copy in the page.
+  const LOGO_SRC = 'data:image/png;base64,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';
+  document.querySelectorAll('img.brand-logo').forEach(function(img){ img.src = LOGO_SRC; });
+  document.querySelectorAll('image.brand-logo-svg').forEach(function(img){
+    img.setAttribute('href', LOGO_SRC);
+    img.setAttribute('xlink:href', LOGO_SRC);
+  });
+</script>
+<script>
+  // Count-up animation for the flow diagram outputs — fires immediately, no scroll gate,
+  // so the whole idea reads in the first few seconds on load.
+  function easeOutQuad(t){ return t * (2 - t); }
+
+  function animateCount(el, target, duration){
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now - start) / duration, 1);
+      const val = Math.floor(easeOutQuad(p) * target);
+      el.textContent = val.toLocaleString('en-US');
+      if(p < 1){ requestAnimationFrame(tick); }
+      else { el.textContent = target.toLocaleString('en-US'); }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.out-count').forEach(function(el, i){
+      const target = parseInt(el.getAttribute('data-count'), 10);
+      setTimeout(function(){ animateCount(el, target, 1300); }, 250 + i * 180);
+    });
+  });
+
+  // Node caption slideshow — cycles short status phrases in the "claro" node
+  // to sell the pipeline's stages (matching, enriching, validating, syncing)
+  // without relying on a scroll trigger.
+  (function(){
+    const phrases = [
+      'Matching data points',
+      'Enriching catalog',
+      'Validating formatting',
+      'Resolving duplicates',
+      'Syncing to your systems'
+    ];
+    const caption = document.getElementById('nodeCaption');
+    if(!caption) return;
+    const caps = caption.querySelectorAll('.cap');
+    let idx = 0;
+    setInterval(function(){
+      const nextIdx = (idx + 1) % phrases.length;
+      const active = caption.querySelector('.cap.active');
+      const incoming = active === caps[0] ? caps[1] : caps[0];
+      incoming.textContent = phrases[nextIdx];
+      requestAnimationFrame(function(){
+        incoming.classList.add('active');
+        active.classList.remove('active');
+      });
+      idx = nextIdx;
+    }, 2200);
+  })();
+</script>
+
+</body>
+</html>
