@@ -3,18 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F1117">
+<meta name="color-scheme" content="dark light">
+<meta name="supported-color-schemes" content="dark light">
 <title>Mazingo — Borrow first. 
 </title>
+<style>html{background:#0F1117;color-scheme:dark}html[data-theme="light"]{background:#F0F2F4;color-scheme:light}</style>
 <script>
-/* Applied before first paint so a saved preference never flashes the wrong theme. */
+/* Runs before the first stylesheet is parsed, so Safari never paints a white
+   frame: the <style> above has already set the canvas, and this only corrects
+   it when the user has opted into light. */
 (function(){
+  var t = 'dark';
   try{
-    /* Dark is the product default; light is opt-in via Profile > Settings. */
-    var saved = localStorage.getItem('mazingo-theme');
-    document.documentElement.setAttribute('data-theme', saved === 'light' ? 'light' : 'dark');
-  }catch(e){
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }
+    if (localStorage.getItem('mazingo-theme') === 'light') t = 'light';
+  }catch(e){}
+  var de = document.documentElement;
+  de.setAttribute('data-theme', t);
+  de.style.background = t === 'light' ? '#F0F2F4' : '#0F1117';
+  de.style.colorScheme = t;
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -507,7 +514,7 @@
   /* ---------- CATEGORY STRIP ---------- */
   .cat-strip-wrap{
     position: relative;
-    background: var(--iridescent-edge);
+    background: var(--forest);
   }
   .cat-strip{
     border-top: 2px solid var(--stroke);
@@ -515,20 +522,23 @@
     background: var(--forest);
     overflow: hidden;
     padding: 16px 0;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
   }
+  /* `gap` makes the track (n chips + n-1 gaps) wide, so translating -50% lands
+     half a gap short and opens a seam every loop. Per-chip margin makes each
+     chip exactly (width + 14px), so one half is a whole number of chips. */
   .cat-track{
     display:flex;
-    gap: 14px;
+    gap: 0;
     width: max-content;
+    will-change: transform;
     animation: scroll-x 32s linear infinite;
   }
+  .cat-track .chip{ margin-right: 14px; }
   @media (prefers-reduced-motion: reduce){ .cat-track{ animation: none; } }
   .cat-strip:hover .cat-track{ animation-play-state: paused; }
   @keyframes scroll-x{
     from{ transform: translateX(0); }
-    to{ transform: translateX(-50%); }
+    to{ transform: translateX(calc(-1 * var(--marquee-shift, 50%))); }
   }
   .chip{
     font-family: var(--mono);
@@ -1951,8 +1961,6 @@ body{ overflow-x: hidden; }
   .nav-cta .nav-list-now:active{ background-position: 55% 50%; }
 </style>
 <link rel="manifest" href="/app/manifest.webmanifest">
-<meta name="theme-color" content="#0F1117">
-<meta name="color-scheme" content="dark light">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -2416,24 +2424,6 @@ Buy never.</span></h1>
 
 <section id="gamify">
   <div class="wrap gami">
-    <div class="streak-card">
-      <div class="streak-top">
-        <div>
-          <div class="streak-name">Your lending streak</div>
-        </div>
-        <div class="streak-num">12</div>
-      </div>
-      <div class="streak-flames">
-        <div>🔥</div><div>🔥</div><div>🔥</div><div>🔥</div><div>🔥</div>
-        <div class="empty"></div><div class="empty"></div>
-      </div>
-      <div class="badge-row">
-        <span class="badge">⚡ Quick returner</span>
-        <span class="badge">★ Five‑star lender</span>
-        <span class="badge">📦 10 items shared</span>
-      </div>
-    </div>
-
     <div>
       <div class="section-tag">Why bother</div>
       <h2 style="margin-bottom:24px;">Reputation you actually build</h2>
@@ -2460,6 +2450,23 @@ Buy never.</span></h1>
           </div>
         </li>
       </ul>
+    </div>
+    <div class="streak-card">
+      <div class="streak-top">
+        <div>
+          <div class="streak-name">Your lending streak</div>
+        </div>
+        <div class="streak-num">12</div>
+      </div>
+      <div class="streak-flames">
+        <div>🔥</div><div>🔥</div><div>🔥</div><div>🔥</div><div>🔥</div>
+        <div class="empty"></div><div class="empty"></div>
+      </div>
+      <div class="badge-row">
+        <span class="badge">⚡ Quick returner</span>
+        <span class="badge">★ Five‑star lender</span>
+        <span class="badge">📦 10 items shared</span>
+      </div>
     </div>
   </div>
 </section>
@@ -3954,6 +3961,10 @@ Buy never.</span></h1>
           <label class="switch"><input type="checkbox" id="themeToggle" role="switch" aria-label="Dark mode"><span class="track"></span></label>
         </div>
         <div class="set-row">
+          <div>Deutsch<span class="sub" id="langToggleLabel">Switch the whole site to German</span></div>
+          <label class="switch"><input type="checkbox" id="langToggle" role="switch" aria-label="Deutsch"><span class="track"></span></label>
+        </div>
+        <div class="set-row">
           <div>Borrow requests<span class="sub">Push + email when someone asks</span></div>
           <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
         </div>
@@ -4108,8 +4119,8 @@ Buy never.</span></h1>
       <div class="modal-section">
         <label class="modal-label">Price</label>
         <div class="auth-tabs" id="priceTabs">
-          <button type="button" class="auth-tab active" data-mode="listed">Pay listed rate</button>
-          <button type="button" class="auth-tab" data-mode="offer">Make an offer</button>
+          <button type="button" class="auth-tab active" data-mode="listed">Pay Rate</button>
+          <button type="button" class="auth-tab" data-mode="offer">Offer</button>
         </div>
         <div class="offer-input-row" id="offerInputRow" style="display:none;">
           <label for="offerPrice">Your offer (per day)</label>
@@ -4797,8 +4808,8 @@ Buy never.</span></h1>
       <div class="modal-section">
         <label class="modal-label">Your price</label>
         <div class="auth-tabs" id="claimPriceTabs">
-          <button type="button" class="auth-tab active" data-mode="bounty">Accept the bounty</button>
-          <button type="button" class="auth-tab" data-mode="offer">Pitch your own price</button>
+          <button type="button" class="auth-tab active" data-mode="bounty">Accept Bounty</button>
+          <button type="button" class="auth-tab" data-mode="offer">Pitch Price</button>
         </div>
         <div class="offer-input-row" id="claimOfferRow" style="display:none;">
           <label for="claimPrice">Your price (total)</label>
@@ -5731,9 +5742,29 @@ body{ overflow-x: clip; }
   body{ overflow-x: hidden; }
 }
 
-/* Respect notches without disturbing the sticky header. */
+/* ---- Safe areas: Dynamic Island / notch / home indicator ----
+   The sticky header carries the top inset itself (padding, not margin, so it
+   stays flush to the top of the viewport and the frosted blur runs edge to
+   edge underneath the island). Side insets go on <body> so every descendant
+   inherits them in landscape without touching .wrap's breakpoints. */
 header{ padding-top: env(safe-area-inset-top, 0px); }
 footer{ padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+body{
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+/* Fixed-position layers sit outside the body box, so they inset themselves. */
+.modal-overlay, .success-overlay, .photo-lightbox{
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+#msgPanel{
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+#msgPanel .msg-thread{ padding-top: env(safe-area-inset-top, 0px); }
 
 /* Nav can never push itself off-screen. */
 .nav-row{ gap: 12px; min-width: 0; }
@@ -5795,6 +5826,12 @@ footer{ padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
   .profile-nav-label{ display: none; }
 }
 
+/* Columns are swapped in the markup for desktop; on one column the streak
+   card leads again, exactly as it did before the swap. */
+@media (max-width: 880px){
+  .gami > .streak-card{ order: -1; }
+}
+
 @media (max-width: 560px){
   /* The grids carried their own 22px gutter on top of .wrap's 28px, which
      cost every card 50px of width on a phone. One gutter is enough.        */
@@ -5848,7 +5885,10 @@ footer{ padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
   }
 
   function apply(theme, persist){
-    document.documentElement.setAttribute('data-theme', theme);
+    var de = document.documentElement;
+    de.setAttribute('data-theme', theme);
+    de.style.background = theme === 'light' ? '#F0F2F4' : '#0F1117';
+    de.style.colorScheme = theme;
     var meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', theme === 'light' ? LIGHT_CHROME : DARK_CHROME);
     var bar = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
@@ -5880,6 +5920,818 @@ footer{ padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
     init();
   }
 })();
+</script>
+
+
+<script>
+/* ---- Category marquee: genuinely seamless at any viewport width ----
+   The old markup hard-coded two copies of the set. On a wide monitor two
+   copies are narrower than the strip, so translating -50% ran the track clean
+   off the right edge and left a gap. Here we measure one set, clone enough
+   sets to cover the strip twice over, and translate exactly half the track —
+   which is always a whole number of sets, so the seam is invisible. Speed is
+   held constant (px/sec) rather than fixed duration, so adding copies doesn't
+   make it sprint. */
+(function(){
+  var SPEED = 55; // px per second
+  var track = document.getElementById('catTrack');
+  if (!track) return;
+  var strip = track.parentElement;
+
+  // The first run of unique chips (markup ships the set twice as a no-JS fallback).
+  var all = Array.prototype.slice.call(track.children);
+  var base = [], seen = Object.create(null);
+  for (var i = 0; i < all.length; i++){
+    var key = all[i].textContent.trim();
+    if (seen[key]) break;
+    seen[key] = 1;
+    base.push(all[i].cloneNode(true));
+  }
+  if (!base.length) return;
+
+  var built = 0;
+  function build(){
+    var viewport = strip.clientWidth || window.innerWidth;
+
+    // width of exactly one set
+    track.innerHTML = '';
+    base.forEach(function(n){ track.appendChild(n.cloneNode(true)); });
+    var setW = track.scrollWidth;
+    if (!setW) return;
+
+    // enough sets that one half of the track always overflows the strip
+    var sets = Math.max(2, Math.ceil(viewport / setW) + 1);
+    if (sets === built) { /* still rebuild below, cheap enough */ }
+    built = sets;
+
+    var frag = document.createDocumentFragment();
+    for (var s = 0; s < sets * 2; s++){
+      base.forEach(function(n){ frag.appendChild(n.cloneNode(true)); });
+    }
+    track.innerHTML = '';
+    track.appendChild(frag);
+
+    // Measure the real distance from chip 0 to the first chip of the repeat.
+    // Using layout positions rather than -50% keeps the loop exact even where
+    // a trailing margin isn't counted in the container's width.
+    var kids = track.children;
+    var repeatIndex = base.length * sets;
+    var shift = (kids[repeatIndex] && kids[0])
+      ? kids[repeatIndex].offsetLeft - kids[0].offsetLeft
+      : setW * sets;
+
+    track.style.setProperty('--marquee-shift', shift + 'px');
+
+    // Restart from frame 0 so the new distance takes effect immediately.
+    // Clearing the `animation` shorthand also clears animation-duration, so
+    // the duration must be (re)applied after the restart, not before.
+    track.style.animation = 'none';
+    void track.offsetWidth;
+    track.style.animation = '';
+    track.style.animationDuration = (shift / SPEED).toFixed(2) + 's';
+  }
+
+  build();
+
+  var t;
+  window.addEventListener('resize', function(){
+    clearTimeout(t);
+    t = setTimeout(build, 200);
+  });
+  // Fonts land after first paint and change chip widths, so re-measure.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(build).catch(function(){});
+})();
+</script>
+
+
+<script>window.__MZ_DE__ = {
+"+ Add new": "+ Neu hinzufügen",
+"/10 days": "/10 Tage",
+"/2 days": "/2 Tage",
+"/2 weeks": "/2 Wochen",
+"/3 days": "/3 Tage",
+"/4 days": "/4 Tage",
+"/7 days": "/7 Tage",
+"/day": "/Tag",
+"/month": "/Monat",
+"/week": "/Woche",
+"1,240 items checked out this semester": "1.240 Artikel in diesem Semester ausgeliehen",
+"10 items": "10 Artikel",
+"10-inch ring light with adjustable stand and phone clip. A bit wobbly at full height but works great for calls and content.": "10‑Zoll‑Ringlicht mit verstellbarem Stativ und Handyhalterung. Bei voller Höhe etwas wackelig, für Calls und Content aber super.",
+"12 wishes": "12 Wünsche",
+"2-person pop-up tent, easy one-minute setup. Used for two festivals, no rips or damage.": "Pop‑up‑Zelt für 2 Personen, in einer Minute aufgebaut. Zweimal auf Festivals genutzt, keine Risse oder Schäden.",
+"240+ items from dorms and shared flats within walking distance. Filter by category, price, or what's actually free today.": "240+ Artikel aus Wohnheimen und WGs in Laufnähe. Filtere nach Kategorie, Preis oder was heute wirklich frei ist.",
+"3 days": "3 Tage",
+"3D printer slot": "3D‑Drucker‑Slot",
+"60+ open requests from students nearby. Someone needs a drill, a suitcase, a tripod — if it's sitting in your room, that's money on the table.": "60+ offene Anfragen von Studierenden in der Nähe. Jemand braucht einen Bohrer, einen Koffer, ein Stativ — steht es bei dir herum, ist das bares Geld.",
+"7 days": "7 Tage",
+"A short description of your item will show up here as you type.": "Eine kurze Beschreibung deines Artikels erscheint hier beim Tippen.",
+"A transaction fee is added at checkout — never buried. Lenders see it before they set a price, borrowers see it before they pay.": "Eine Transaktionsgebühr kommt beim Bezahlen dazu — nie versteckt. Verleihende sehen sie vor der Preisfestlegung, Leihende vor dem Bezahlen.",
+"AVAILABLE": "VERFÜGBAR",
+"Accept Bounty": "Gesuch annehmen",
+"Accept bounty & send message": "Gesuch annehmen & Nachricht senden",
+"Accept offers": "Angebote annehmen",
+"Acoustic guitar": "Akustikgitarre",
+"Acoustic guitar with a soft case": "Akustikgitarre mit Softcase",
+"Active listings": "Aktive Inserate",
+"Add photos of the item": "Fotos des Artikels hinzufügen",
+"Ajmanstraße, 4 min walk": "Ajmanstraße, 4 Min. zu Fuß",
+"All": "Alle",
+"All campuses": "Alle Campus",
+"Amp for a dorm rehearsal": "Verstärker für eine Wohnheimprobe",
+"Anny · ★ 4.9": "Anny · ★ 4,9",
+"Aug · €85": "Aug · 85 €",
+"Available": "Verfügbar",
+"Available now only": "Nur jetzt verfügbare",
+"Ayşe · FU Berlin · Steglitz": "Ayşe · FU Berlin · Steglitz",
+"BOARD": "BOARD",
+"BOUNTY": "GESUCHE",
+"BOUNTY · NOISE-CANCELLING HEADPHONES": "GESUCH · NOISE‑CANCELLING‑KOPFHÖRER",
+"BOUNTY · RICE COOKER": "GESUCH · REISKOCHER",
+"Back soon": "Bald zurück",
+"Back to home": "Zurück zur Startseite",
+"Badges unlock lower fees": "Abzeichen senken die Gebühren",
+"Band rehearsal in the common room, our amp died. Small practice amp is completely fine.": "Bandprobe im Gemeinschaftsraum, unser Verstärker ist hin. Ein kleiner Übungsverstärker reicht völlig.",
+"Bank account (SEPA)": "Bankkonto (SEPA)",
+"Ben · HU Berlin · Prenzlauer Berg": "Ben · HU Berlin · Prenzlauer Berg",
+"Berlin": "Berlin",
+"Big suitcase for a semester flight": "Großer Koffer für einen Semesterflug",
+"Bike for two weeks of internship": "Fahrrad für zwei Wochen Praktikum",
+"Bike trailer": "Fahrradanhänger",
+"Booking request": "Buchungsanfrage",
+"Borrow": "Leihen",
+"Borrow again": "Erneut leihen",
+"Borrow first.": "Erst leihen.",
+"Borrow requests": "Leihanfragen",
+"Borrow this item": "Diesen Artikel leihen",
+"Borrower scans the card to check the item back in, the deposit releases automatically, and both sides rate the handoff.": "Die leihende Person scannt die Karte zur Rückgabe, die Kaution wird automatisch freigegeben, und beide Seiten bewerten die Übergabe.",
+"Borrowers nearby can now send offers or claim it at your listed rate. You'll get a notification the moment someone does.": "Leihende in der Nähe können jetzt Angebote senden oder zum Listenpreis zugreifen. Du wirst sofort benachrichtigt.",
+"Borrowers send an offer or pay the listed rate. The deposit is held by Mazingo the moment it's accepted — no cash changes hands.": "Leihende senden ein Angebot oder zahlen den Listenpreis. Die Kaution hält Mazingo ab dem Moment der Annahme — kein Bargeld wechselt den Besitzer.",
+"Bosch drill": "Bosch‑Bohrer",
+"Bounties": "Gesuche",
+"Bounties filled": "Erfüllte Gesuche",
+"Bounty": "Gesuche",
+"Bounty accepted 🎉 bringing it Friday.": "Gesuch angenommen 🎉 ich bringe es Freitag.",
+"Bounty alerts": "Gesuch‑Benachrichtigungen",
+"Bounty offered": "Gebotene Belohnung",
+"Bounty · noise-cancelling headphones": "Gesuch · Noise‑Cancelling‑Kopfhörer",
+"Bounty · rice cooker": "Gesuch · Reiskocher",
+"Bounty: high to low": "Belohnung: absteigend",
+"Bounty: low to high": "Belohnung: aufsteigend",
+"Browse": "Stöbern",
+"Browse bounties": "Gesuche durchsuchen",
+"Browse the board": "Board durchsuchen",
+"Buy never.": "Nie kaufen.",
+"CITY BIKE · DEPOSIT €40": "CITYRAD · KAUTION 40 €",
+"CLIMBING SHOES · SIZE 41": "KLETTERSCHUHE · GRÖSSE 41",
+"Calculators": "Taschenrechner",
+"Cameras": "Kameras",
+"Campus leaderboard": "Campus‑Rangliste",
+"Cancel": "Abbrechen",
+"Cardioid USB condenser mic on a desktop stand, pop filter included. Great for lectures, podcasts, or Discord calls.": "Nieren‑USB‑Kondensatormikrofon auf Tischstativ, Popschutz inklusive. Ideal für Vorlesungen, Podcasts oder Discord‑Calls.",
+"Career fair on Thursday and I own exactly zero blazers. Size M, dark colour, nothing fancy.": "Jobmesse am Donnerstag und ich besitze exakt null Sakkos. Größe M, dunkel, nichts Ausgefallenes.",
+"Category": "Kategorie",
+"Change": "Ändern",
+"Charlottenburg · ★4.9 · deposit €10": "Charlottenburg · ★4,9 · Kaution 10 €",
+"Check it back in": "Wieder einchecken",
+"Checkout card No.": "Leihkarte Nr.",
+"Checkout card No. 0417": "Leihkarte Nr. 0417",
+"Choose a payout method": "Auszahlungsmethode wählen",
+"City bike · deposit €40": "Cityrad · Kaution 40 €",
+"Claimed": "Vergeben",
+"Climbing shoes · size 41": "Kletterschuhe · Größe 41",
+"Close": "Schließen",
+"Close messages": "Nachrichten schließen",
+"Close photo": "Foto schließen",
+"Clothing": "Kleidung",
+"Complete cruiser board, great for campus commutes. Bearings cleaned every month, grip tape has some wear but still solid grip.": "Komplettes Cruiser‑Board, ideal für den Weg zum Campus. Lager werden monatlich gereinigt, das Griptape ist etwas abgenutzt, hält aber noch gut.",
+"Condition": "Zustand",
+"Contact": "Kontakt",
+"Continue with Facebook": "Weiter mit Facebook",
+"Continue with Google": "Weiter mit Google",
+"Continue with phone number": "Weiter mit Telefonnummer",
+"Cordless drill for a shelf build": "Akkubohrer für einen Regalaufbau",
+"Cruiser skateboard": "Cruiser‑Skateboard",
+"Cruiser skateboard leaning beside a doorway": "Cruiser‑Skateboard neben einer Tür",
+"DRAFT": "ENTWURF",
+"Dark mode": "Dunkelmodus",
+"Days": "Tage",
+"Deposit": "Kaution",
+"Deposit (refundable)": "Kaution (erstattbar)",
+"Deposit is held, all good from my side.": "Die Kaution ist hinterlegt, von meiner Seite alles gut.",
+"Deposit not listed": "Kaution nicht angegeben",
+"Deposit €0": "Kaution 0 €",
+"Deposits held": "Kautionen gehalten",
+"Deposits held, not guessed at": "Kautionen hinterlegt, nicht geschätzt",
+"Description": "Beschreibung",
+"Description goes here.": "Hier steht die Beschreibung.",
+"Desk & study": "Schreibtisch & Lernen",
+"Deutsch": "Deutsch",
+"Dimmed surfaces for night-time use": "Gedämpfte Flächen für die Nacht",
+"Direct to your IBAN · 1–2 business days": "Direkt auf deine IBAN · 1–2 Werktage",
+"Done": "Fertig",
+"Dorm life": "Wohnheim",
+"Drop photos here or tap to choose": "Fotos hier ablegen oder tippen zum Auswählen",
+"Due at pickup": "Fällig bei Abholung",
+"Due back": "Rückgabe",
+"Duration": "Dauer",
+"Earned all time": "Insgesamt verdient",
+"Earned last month": "Letzten Monat verdient",
+"Edit": "Bearbeiten",
+"Every handoff, on the record": "Jede Übergabe dokumentiert",
+"Every item is one card, start to finish.": "Jeder Artikel ist eine Karte, von Anfang bis Ende.",
+"Every on-time return adds a day to your streak. Break it, and your next deposit hold goes up slightly — no drama, just math.": "Jede pünktliche Rückgabe verlängert deine Serie um einen Tag. Reißt sie, steigt deine nächste Kaution leicht — kein Drama, nur Mathe.",
+"Everything up for grabs right now": "Alles, was gerade zu haben ist",
+"First photo becomes the cover. Up to 6.": "Das erste Foto wird das Titelbild. Bis zu 6.",
+"Flying home for the break and my carry-on is way too small. 25kg-ish hard shell would be perfect.": "Fliege in den Ferien nach Hause und mein Handgepäck ist viel zu klein. Ein Hartschalenkoffer mit ca. 25 kg wäre perfekt.",
+"For your campus": "Für deinen Campus",
+"Fr": "Fr",
+"Friedrichshain · ★4.7 · deposit €80": "Friedrichshain · ★4,7 · Kaution 80 €",
+"From HTW maker space · 8 Sep": "Vom HTW Makerspace · 8. Sep",
+"From Nina B. · 10–13 Sep": "Von Nina B. · 10.–13. Sep",
+"From Omar D. · 19 Aug": "Von Omar D. · 19. Aug",
+"From Student union · 2 Aug": "Vom Studierendenrat · 2. Aug",
+"From Studierendenwerk · 30 Aug": "Vom Studierendenwerk · 30. Aug",
+"Fujifilm X-T30 with the 18-55mm kit lens, one battery and charger included. Barely used outside of a few weekend shoots.": "Fujifilm X‑T30 mit 18‑55‑mm‑Kit‑Objektiv, ein Akku und Ladegerät inklusive. Kaum benutzt, nur ein paar Wochenend‑Shootings.",
+"Fujifilm X‑T30": "Fujifilm X‑T30",
+"Fujifilm camera with lens and strap": "Fujifilm‑Kamera mit Objektiv und Gurt",
+"Full listing photo": "Vollständiges Inseratsfoto",
+"Gaming": "Gaming",
+"Good": "Gut",
+"Good to see you": "Schön, dich zu sehen",
+"Graphing calculator before the exam": "Grafikrechner vor der Klausur",
+"HTW Berlin · Schöneberg · Member since May 2026": "HTW Berlin · Schöneberg · Mitglied seit Mai 2026",
+"HTW Berlin shown on listings": "HTW Berlin wird auf Inseraten angezeigt",
+"Hannah · Charité Berlin · Mitte": "Hannah · Charité Berlin · Mitte",
+"Hardenbergstr. 12, 10623 Berlin": "Hardenbergstr. 12, 10623 Berlin",
+"Held by Mazingo, released automatically at check-in.": "Von Mazingo gehalten, bei Rückgabe automatisch freigegeben.",
+"Hey Maaz — that's what the stuff sitting in your room made you in the last 30 days.": "Hey Maaz — so viel haben dir die Sachen in deinem Zimmer in den letzten 30 Tagen eingebracht.",
+"Hey! Still have the shoes? I'm on campus till 6.": "Hey! Hast du die Schuhe noch? Ich bin bis 18 Uhr am Campus.",
+"Hey! Still have the shoes? I’m on campus till 6.": "Hey! Hast du die Schuhe noch? Ich bin bis 18 Uhr am Campus.",
+"Hiking backpack 60L": "Wanderrucksack 60 L",
+"Hit Five‑Star Lender and Mazingo's cut on your listings drops from 8% to 5%. Trust is worth something here.": "Erreiche Fünf‑Sterne‑Verleiher und Mazingos Anteil an deinen Inseraten sinkt von 8 % auf 5 %. Vertrauen ist hier etwas wert.",
+"Hosting eight people for a raclette night. Need the grill plus whatever little pans come with it.": "Lade acht Leute zum Raclette‑Abend ein. Brauche den Grill plus die kleinen Pfännchen.",
+"How it works": "So funktioniert's",
+"How long do you need it?": "Wie lange brauchst du es?",
+"I can do €40 for the bounty — pickup tomorrow?": "Ich kann 40 € für das Gesuch machen — Abholung morgen?",
+"I have this": "Ich habe das",
+"Instant approve": "Sofort bestätigen",
+"Instant to your PayPal balance": "Sofort auf dein PayPal‑Guthaben",
+"Internship is a 20-minute ride away and BVG is killing my budget. City bike with a lock ideally.": "Das Praktikum ist 20 Minuten entfernt und die BVG ruiniert mein Budget. Am liebsten ein Cityrad mit Schloss.",
+"Intro statistics textbook plus the accompanying workbook, some highlighting inside but all pages intact.": "Einführungs‑Lehrbuch Statistik plus Arbeitsbuch, teils markiert, aber alle Seiten vollständig.",
+"Item name": "Artikelname",
+"Items borrowed": "Geliehene Artikel",
+"Items lent out": "Verliehene Artikel",
+"JPG or PNG, up to 6 photos": "JPG oder PNG, bis zu 6 Fotos",
+"Jonas · HTW Berlin · Treptow": "Jonas · HTW Berlin · Treptow",
+"Jul · €67": "Jul · 67 €",
+"Jun · €55": "Jun · 55 €",
+"Kai · TU Berlin · Kreuzberg": "Kai · TU Berlin · Kreuzberg",
+"Kitchen": "Küche",
+"Kreuzberg · ★4.8 · deposit €20": "Kreuzberg · ★4,8 · Kaution 20 €",
+"LIST NOW": "JETZT INSERIEREN",
+"Large suitcase": "Großer Koffer",
+"Last 5 months": "Letzte 5 Monate",
+"Legend. Thank you!": "Legende. Danke dir!",
+"Lena · TU Berlin · Moabit": "Lena · TU Berlin · Moabit",
+"Lender": "Verleiher",
+"Lent to Aylin K. · 5–7 Sep": "Verliehen an Aylin K. · 5.–7. Sep",
+"Lent to FU AStA · 15–16 Aug": "Verliehen an FU AStA · 15.–16. Aug",
+"Lent to Jonas R. · 12–14 Sep": "Verliehen an Jonas R. · 12.–14. Sep",
+"Lent to Pia S. · 22–24 Aug": "Verliehen an Pia S. · 22.–24. Aug",
+"Lent to Studierendenwerk · 29 Aug–2 Sep": "Verliehen an Studierendenwerk · 29. Aug–2. Sep",
+"Let borrowers propose a different price instead of only the listed rate": "Leihende dürfen einen anderen Preis vorschlagen statt nur den Listenpreis",
+"Like new": "Wie neu",
+"List an item": "Artikel inserieren",
+"List another": "Weiteres inserieren",
+"List the first thing gathering dust in your room. It takes about ninety seconds, and the board does the rest.": "Inseriere das erste Teil, das in deinem Zimmer verstaubt. Das dauert etwa neunzig Sekunden, den Rest macht das Board.",
+"List your first item": "Ersten Artikel inserieren",
+"Listed": "Inseriert",
+"Listing options": "Inserat‑Optionen",
+"Live": "Live",
+"Live preview": "Live‑Vorschau",
+"Location · rating · deposit": "Ort · Bewertung · Kaution",
+"Log in": "Anmelden",
+"Log in with your uni email to borrow or lend.": "Melde dich mit deiner Uni‑E‑Mail an, um zu leihen oder zu verleihen.",
+"Log out": "Abmelden",
+"Maaz Bin Kashif profile photo": "Profilfoto von Maaz Bin Kashif",
+"Marie · FU Berlin · Friedrichshain": "Marie · FU Berlin · Friedrichshain",
+"Marta · UdK Berlin · Neukölln": "Marta · UdK Berlin · Neukölln",
+"Max price": "Höchstpreis",
+"Max rental": "Max. Leihdauer",
+"Max rental length": "Maximale Leihdauer",
+"May · €48": "Mai · 48 €",
+"Mazingo holds the agreed deposit from the moment an offer's accepted until check‑in. Nobody's Venmo-ing a stranger.": "Mazingo hält die vereinbarte Kaution von der Annahme des Angebots bis zur Rückgabe. Niemand überweist Fremden Geld.",
+"Message": "Nachricht",
+"Messages": "Nachrichten",
+"Mics & audio": "Mikros & Audio",
+"Min bounty": "Mindestbelohnung",
+"Mini projector": "Mini‑Beamer",
+"Mitte · ★5.0 · deposit €15": "Mitte · ★5,0 · Kaution 15 €",
+"Mixing a podcast season and my earbuds are useless. Closed-back over-ears, any brand.": "Mische eine Podcast‑Staffel und meine In‑Ears taugen nichts. Geschlossene Over‑Ears, egal welche Marke.",
+"Mo": "Mo",
+"Moabit · ★4.8 · deposit €35": "Moabit · ★4,8 · Kaution 35 €",
+"Mobility": "Mobilität",
+"More cities coming soon": "Weitere Städte folgen bald",
+"Multi-currency · instant to your account": "Mehrwährung · sofort auf dein Konto",
+"My campus": "Mein Campus",
+"My offers": "Meine Angebote",
+"Nearest first": "Nächste zuerst",
+"Neukölln · ★4.6 · deposit €18": "Neukölln · ★4,6 · Kaution 18 €",
+"New listing": "Neues Inserat",
+"New to Mazingo?": "Neu bei Mazingo?",
+"Newest first": "Neueste zuerst",
+"Next month": "Nächster Monat",
+"Next photo": "Nächstes Foto",
+"Nikola · HTW Berlin · Schöneberg": "Nikola · HTW Berlin · Schöneberg",
+"Nintendo Switch OLED": "Nintendo Switch OLED",
+"No description provided yet.": "Noch keine Beschreibung vorhanden.",
+"No group chats, no IOUs on a whiteboard. The card tracks the item from the moment it's listed to the moment it's back on the shelf.": "Keine Gruppenchats, keine Schuldzettel am Whiteboard. Die Karte verfolgt den Artikel vom Inserat bis zur Rückkehr ins Regal.",
+"No wishes match yet": "Noch keine passenden Wünsche",
+"Nordkiez · ★4.9 · deposit €40": "Nordkiez · ★4,9 · Kaution 40 €",
+"Not set yet": "Noch nicht festgelegt",
+"Note to lender (optional)": "Nachricht an Verleiher:in (optional)",
+"Nothing matches yet": "Noch keine Treffer",
+"Now live at your campus": "Jetzt live an deinem Campus",
+"Offer": "Angebot",
+"Offer sent": "Angebot gesendet",
+"Offer sent.": "Angebot gesendet.",
+"Offer, accept, meet up": "Anbieten, annehmen, treffen",
+"Omar · HU Berlin · Mitte": "Omar · HU Berlin · Mitte",
+"On it!": "Bin dran!",
+"One small fee, shown upfront": "Eine kleine Gebühr, vorab sichtbar",
+"Only borrowers verified with a .edu-style university address can request it": "Nur mit einer Uni‑Adresse verifizierte Leihende können anfragen",
+"Only need it for two chapters before the midterm. Any edition from the last five years works.": "Brauche es nur für zwei Kapitel vor der Zwischenprüfung. Jede Ausgabe der letzten fünf Jahre passt.",
+"Open messages": "Nachrichten öffnen",
+"Open wishes only": "Nur offene Wünsche",
+"Or just say what you need fr..": "Oder sag einfach, was du brauchst..",
+"Organic chemistry textbook": "Lehrbuch Organische Chemie",
+"Original daylight palette": "Ursprüngliche Tagespalette",
+"Other campuses": "Andere Campus",
+"Out now": "Verliehen",
+"Outdoors": "Outdoor",
+"PS5 + 2 controllers": "PS5 + 2 Controller",
+"PS5 disc edition with two DualSense controllers and all original cables. Comes with Spider-Man 2 and FIFA 24 installed.": "PS5 Disc Edition mit zwei DualSense‑Controllern und allen Originalkabeln. Spider‑Man 2 und FIFA 24 sind installiert.",
+"Password": "Passwort",
+"Paused": "Pausiert",
+"Pay Rate": "Preis zahlen",
+"PayPal": "PayPal",
+"Payout method": "Auszahlungsmethode",
+"Perfect, see you at the north gate.": "Perfekt, bis später am Nordtor.",
+"Photo 1 of 3": "Foto 1 von 3",
+"Photos": "Fotos",
+"Pick where Mazingo sends your earnings.": "Wähle, wohin Mazingo deine Einnahmen sendet.",
+"Pickup": "Abholung",
+"Pickup address": "Abholadresse",
+"Pickup and return are both logged in the app, with photos if either side wants them. Disputes get resolved against that record.": "Abholung und Rückgabe werden in der App protokolliert, auf Wunsch mit Fotos. Streitfälle werden anhand dieser Aufzeichnung geklärt.",
+"Pickup location": "Abholort",
+"Pitch Price": "Preis vorschlagen",
+"Pop‑up tent (2‑person)": "Pop‑up‑Zelt (2 Personen)",
+"Post a wish": "Wunsch posten",
+"Post it": "Posten",
+"Prenzlauer Berg · ★4.5 · deposit €30": "Prenzlauer Berg · ★4,5 · Kaution 30 €",
+"Previous month": "Vorheriger Monat",
+"Previous photo": "Vorheriges Foto",
+"Price": "Preis",
+"Price per day": "Preis pro Tag",
+"Price: high to low": "Preis: absteigend",
+"Price: low to high": "Preis: aufsteigend",
+"Pricing": "Preis",
+"Profile": "Profil",
+"Publish listing": "Inserat veröffentlichen",
+"Pulled from dorms and shared flats within walking distance. Everything here is idle more often than it's used.": "Aus Wohnheimen und WGs in Laufnähe. Alles hier steht öfter herum, als es benutzt wird.",
+"Push + email when someone asks": "Push + E‑Mail, wenn jemand anfragt",
+"Put it on the board": "Ab aufs Board",
+"Putting up two IKEA shelves this weekend. Need a drill with a normal wood bit — happy to collect it.": "Baue dieses Wochenende zwei IKEA‑Regale auf. Brauche einen Bohrer mit normalem Holzbohrer — hole ihn gerne ab.",
+"Raclette grill for a flat dinner": "Raclette‑Grill für ein WG‑Essen",
+"Rate": "Tarif",
+"Recent earnings grew from 48 euros in May to 109 euros in September": "Die Einnahmen stiegen von 48 Euro im Mai auf 109 Euro im September",
+"Recent earnings growth": "Entwicklung der Einnahmen",
+"Recently borrowed": "Kürzlich geliehen",
+"Recently lent out": "Kürzlich verliehen",
+"Rental cost": "Leihkosten",
+"Reputation you actually build": "Ein Ruf, den du wirklich aufbaust",
+"Requested by": "Angefragt von",
+"Reset filters": "Filter zurücksetzen",
+"Returned": "Zurückgegeben",
+"Returned it this morning, thanks again!": "Heute Morgen zurückgegeben, nochmals danke!",
+"Revolut": "Revolut",
+"Ring light + stand": "Ringlicht + Stativ",
+"Ring light mounted on an adjustable tripod": "Ringlicht auf einem verstellbaren Stativ",
+"SEPA · DE89 •••• 4417": "SEPA · DE89 •••• 4417",
+"STATISTICS TEXTBOOK (2023)": "STATISTIK‑LEHRBUCH (2023)",
+"Sa": "Sa",
+"Save payout method": "Auszahlungsmethode speichern",
+"Saved by borrowing": "Durch Leihen gespart",
+"Say what you need, how long for, and what you'll pay. It goes live on the board instantly.": "Sag, was du brauchst, wie lange und was du zahlst. Es geht sofort live aufs Board.",
+"Search": "Suche",
+"Search wishes": "Wünsche durchsuchen",
+"Second monitor for thesis writing": "Zweiter Monitor fürs Schreiben der Arbeit",
+"See all 240 items nearby": "Alle 240 Artikel in der Nähe ansehen",
+"See all 60 open bounties": "Alle 60 offenen Gesuche ansehen",
+"See which floor lends the most. HTW's dorm block has been undefeated for three semesters running.": "Sieh, welche Etage am meisten verleiht. Der HTW‑Wohnblock ist seit drei Semestern ungeschlagen.",
+"Send": "Senden",
+"Send offer": "Angebot senden",
+"Send offer & message": "Angebot & Nachricht senden",
+"Sep · €109": "Sep · 109 €",
+"Settings": "Einstellungen",
+"Shooting a 4-minute short for my film seminar. Any fluid-head tripod, gimbal is a bonus.": "Drehe einen 4‑minütigen Kurzfilm fürs Filmseminar. Jedes Fluidkopf‑Stativ hilft, Gimbal wäre ein Bonus.",
+"Show my campus publicly": "Campus öffentlich zeigen",
+"Sign up": "Registrieren",
+"Skip manual approval for borrowers with a 4.5★ rating or higher": "Manuelle Freigabe entfällt für Leihende mit 4,5★ oder besser",
+"Snap a photo, set a daily price and a deposit, and pin your pickup spot. Your calculator can pay for itself between exams.": "Foto machen, Tagespreis und Kaution festlegen, Abholort markieren. Dein Taschenrechner kann sich zwischen den Klausuren selbst bezahlen.",
+"Sofia · Charité Berlin · Wedding": "Sofia · Charité Berlin · Wedding",
+"Sort by": "Sortieren nach",
+"Sounds good, send me a photo first 🙏": "Klingt gut, schick mir zuerst ein Foto 🙏",
+"Sports & boards": "Sport & Boards",
+"Standard TI-84 Plus, exactly what's allowed in most exam halls. Batteries included, screen protector already on it.": "Standard TI‑84 Plus, genau das, was in den meisten Prüfungsräumen erlaubt ist. Batterien inklusive, Displayschutz ist bereits drauf.",
+"Statistics textbook (2023)": "Statistik‑Lehrbuch (2023)",
+"Statistics textbook bundle": "Statistik‑Lehrbuchpaket",
+"Stats final on the 18th. Need a TI-84 or Casio that is allowed in the exam hall. Deposit no problem.": "Statistik‑Klausur am 18. Brauche einen TI‑84 oder Casio, der im Prüfungsraum zugelassen ist. Kaution kein Problem.",
+"Steel-string acoustic, recently restrung. Comes with a soft gig bag and a couple of picks.": "Westerngitarre mit Stahlsaiten, frisch bezogen. Mit Gigbag und ein paar Plektren.",
+"Step ladder": "Trittleiter",
+"Streaks": "Serien",
+"Streaks reward reliability": "Serien belohnen Zuverlässigkeit",
+"Studio headphones": "Studiokopfhörer",
+"Studio headphones for mixing": "Studiokopfhörer zum Mischen",
+"Studio lighting": "Studiolicht",
+"Study books and notes on a desk": "Lernbücher und Notizen auf einem Schreibtisch",
+"Su": "So",
+"Suit jacket for a career fair": "Sakko für eine Jobmesse",
+"Sun, 7 days": "So., 7 Tage",
+"Switch OLED with dock, Joy-Cons, and a carrying case. Mario Kart 8 and Smash Bros already downloaded.": "Switch OLED mit Dock, Joy‑Cons und Tasche. Mario Kart 8 und Smash Bros sind bereits heruntergeladen.",
+"TI-84 calculator on a study desk": "TI‑84 Taschenrechner auf einem Schreibtisch",
+"TI‑84 calculator": "TI‑84 Taschenrechner",
+"Takes about ninety seconds. Fill it in and watch your checkout card build itself on the right.": "Dauert etwa neunzig Sekunden. Fülle es aus und sieh rechts zu, wie deine Leihkarte entsteht.",
+"Tap a pickup date, then a return date.": "Tippe ein Abholdatum, dann ein Rückgabedatum.",
+"Tell us what you need first — even one word works.": "Sag uns zuerst, was du brauchst — ein Wort reicht.",
+"Textbooks": "Lehrbücher",
+"Th": "Do",
+"The basics": "Die Basics",
+"The board": "Das Board",
+"The checkout card": "Die Leihkarte",
+"The flip side of the board: post a wish, name what you'll pay, and let someone nearby bring it to you. Same handover, same money, opposite direction.": "Die Kehrseite des Boards: Wunsch posten, Preis nennen, und jemand aus der Nähe bringt es dir. Gleiche Übergabe, gleiches Geld, andere Richtung.",
+"The lender can accept, counter, or decline this offer.": "Die verleihende Person kann annehmen, ein Gegenangebot machen oder ablehnen.",
+"The stuff you need is already sitting in someone's room. List it, lend it, and split the deposit — Mazingo handles the rest, from offer to check‑in.": "Was du brauchst, steht schon in irgendeinem Zimmer. Inserieren, verleihen, Kaution teilen — Mazingo übernimmt den Rest, vom Angebot bis zur Rückgabe.",
+"They can accept, counter, or decline your pitch.": "Sie können annehmen, ein Gegenangebot machen oder ablehnen.",
+"This is a preview — accounts aren't created yet.": "Das ist eine Vorschau — es werden noch keine Konten erstellt.",
+"This is my own offer, feel free to counter.": "Das ist mein eigenes Angebot, gerne ein Gegenangebot.",
+"Tip:": "Tipp:",
+"Title": "Titel",
+"Tobi · UdK Berlin · Wedding": "Tobi · UdK Berlin · Wedding",
+"Tools": "Werkzeug",
+"Top rated": "Bestbewertet",
+"Travel": "Reise",
+"Treptow · ★4.7 · deposit €25": "Treptow · ★4,7 · Kaution 25 €",
+"Tripod + gimbal for a short film": "Stativ + Gimbal für einen Kurzfilm",
+"Tripod + ring light": "Stativ + Ringlicht",
+"Trust & safety": "Sicherheit & Vertrauen",
+"Try widening your filters — or post your own wish above and let someone else come to you.": "Erweitere deine Filter — oder poste oben deinen eigenen Wunsch und lass jemanden zu dir kommen.",
+"Try widening your filters, or check back after class — the board fills up fast between lectures.": "Erweitere deine Filter oder schau nach der Vorlesung wieder vorbei — das Board füllt sich schnell.",
+"Try “calculator” or “camera”": "Versuch „Taschenrechner“ oder „Kamera“",
+"Try “drill” or “suitcase”": "Versuch „Bohrer“ oder „Koffer“",
+"Tu": "Di",
+"Two-person pop-up tent in a courtyard": "Zwei‑Personen‑Pop‑up‑Zelt im Hof",
+"Two-person tent for a festival": "Zwei‑Personen‑Zelt für ein Festival",
+"USB condenser mic": "USB‑Kondensatormikrofon",
+"USB condenser microphone on a desk": "USB‑Kondensatormikrofon auf einem Schreibtisch",
+"Uncategorized": "Ohne Kategorie",
+"Uni email": "Uni‑E‑Mail",
+"Uni email required": "Uni‑E‑Mail erforderlich",
+"Unread": "Ungelesen",
+"View board": "Board ansehen",
+"View the board": "Board ansehen",
+"We": "Mi",
+"Wedding · ★4.9 · deposit €25": "Wedding · ★4,9 · Kaution 25 €",
+"Weekend festival trip and we are one tent short. Will return it cleaned and dry, promise.": "Festival am Wochenende und uns fehlt ein Zelt. Kommt sauber und trocken zurück, versprochen.",
+"Welcome to Mazingo": "Willkommen bei Mazingo",
+"Well used": "Gut gebraucht",
+"What do you need?": "Was brauchst du?",
+"What is it, what's it like, anything a borrower should know?": "Was ist es, wie ist der Zustand, was sollte die leihende Person wissen?",
+"What's around rn!": "Was gerade da ist!",
+"When a wish matches your stuff": "Wenn ein Wunsch zu deinen Sachen passt",
+"Why bother": "Warum überhaupt",
+"Wireless mic set": "Funkmikrofon‑Set",
+"Wishes waiting to be filled": "Wünsche, die auf Erfüllung warten",
+"With you": "Bei dir",
+"Write a message…": "Nachricht schreiben…",
+"Writing my bachelor thesis and one laptop screen is not cutting it. 24-inch or bigger, HDMI.": "Schreibe meine Bachelorarbeit und ein Laptop‑Bildschirm reicht nicht. 24 Zoll oder größer, HDMI.",
+"You can edit or pause this listing any time.": "Du kannst dieses Inserat jederzeit bearbeiten oder pausieren.",
+"You earn on handover": "Du verdienst bei Übergabe",
+"You only pay when someone actually shows up with the thing.": "Du zahlst erst, wenn wirklich jemand mit dem Teil auftaucht.",
+"You · new lender": "Du · neuer Verleiher",
+"Your bounty (€)": "Deine Belohnung (€)",
+"Your dusty PS5 might make you €30 this weekend. List it!": "Deine verstaubte PS5 bringt dir dieses Wochenende vielleicht 30 €. Inseriere sie!",
+"Your dusty PS5 might make you €30 this weekend. List it!": "Deine verstaubte PS5 bringt dir dieses Wochenende vielleicht 30 €. Inseriere sie!",
+"Your item is on the board": "Dein Artikel ist auf dem Board",
+"Your item name": "Name deines Artikels",
+"Your lending streak": "Deine Verleihserie",
+"Your listings": "Deine Inserate",
+"Your offer (per day)": "Dein Angebot (pro Tag)",
+"Your offer is on its way": "Dein Angebot ist unterwegs",
+"Your price": "Dein Preis",
+"Your price (total)": "Dein Preis (gesamt)",
+"Your profile": "Dein Profil",
+"Your swaps, bounties & offers": "Deine Tauschgeschäfte, Gesuche & Angebote",
+"You’re asking": "Du forderst",
+"e.g. I have a Bosch drill with wood bits — free to hand it over Friday after 5pm.": "z. B. Ich habe einen Bosch‑Bohrer mit Holzbohrern — kann ihn Freitag ab 17 Uhr übergeben.",
+"e.g. Nordkiez, near the tram stop": "z. B. Nordkiez, nahe der Tramhaltestelle",
+"e.g. PS5 + 2 controllers": "z. B. PS5 + 2 Controller",
+"e.g. Pickup Friday afternoon works best for me": "z. B. Abholung Freitagnachmittag passt mir am besten",
+"e.g. cordless drill": "z. B. Akkubohrer",
+"listings with a clear cover photo and a set deposit get claimed roughly twice as fast on the board.": "Inserate mit klarem Titelbild und festgelegter Kaution werden auf dem Board etwa doppelt so schnell vergeben.",
+"or continue with": "oder weiter mit",
+"yesterday": "gestern",
+"you@htw-berlin.de": "du@htw-berlin.de",
+"© 2026 Mazingo — built by students, for students.": "© 2026 Mazingo — von Studierenden für Studierende.",
+"€0/day": "0 €/Tag",
+"€10 bounty": "10 € Belohnung",
+"€12 bounty": "12 € Belohnung",
+"€14 bounty": "14 € Belohnung",
+"€15 bounty": "15 € Belohnung",
+"€15/day": "15 €/Tag",
+"€16 bounty": "16 € Belohnung",
+"€18 bounty": "18 € Belohnung",
+"€20 bounty": "20 € Belohnung",
+"€30 bounty": "30 € Belohnung",
+"€35 bounty": "35 € Belohnung",
+"€40 bounty": "40 € Belohnung",
+"€5/day · paused by you": "5 €/Tag · von dir pausiert",
+"€6/day · 9 views this week": "6 €/Tag · 9 Aufrufe diese Woche",
+"€7/day · 6 views this week": "7 €/Tag · 6 Aufrufe diese Woche",
+"€8 bounty": "8 € Belohnung",
+"€8/day · 14 views this week": "8 €/Tag · 14 Aufrufe diese Woche",
+"€9 bounty": "9 € Belohnung",
+"← Back": "← Zurück",
+"▲ 28% vs. August": "▲ 28 % ggü. August",
+"★ 4.9 (37 rentals)": "★ 4,9 (37 Verleihe)",
+"★ Five‑star lender": "★ Fünf‑Sterne‑Verleiher",
+"⚡ Quick returner": "⚡ Schnelle Rückgabe",
+"⚡ needed this week": "⚡ diese Woche nötig",
+"✓ Deposit held: €40": "✓ Kaution hinterlegt: 40 €",
+"✓ LISTED": "✓ INSERIERT",
+"✓ SENT": "✓ GESENDET",
+"✓ Verified student": "✓ Verifizierte:r Studierende:r",
+"🍽️ 8 people": "🍽️ 8 Personen",
+"🎓 student project": "🎓 Studienprojekt",
+"🎙️ Mics & audio": "🎙️ Mikros & Audio",
+"🎙️ audio work": "🎙️ Audioarbeit",
+"🎪 festival": "🎪 Festival",
+"🎮 Gaming": "🎮 Gaming",
+"👔 size M": "👔 Größe M",
+"💡 Studio lighting": "💡 Studiolicht",
+"📄 thesis season": "📄 Abschlussarbeit",
+"📅 1 month": "📅 1 Monat",
+"📅 1 week": "📅 1 Woche",
+"📅 10 days": "📅 10 Tage",
+"📅 12–19 Sep · 7 days": "📅 12.–19. Sep · 7 Tage",
+"📅 15–18 Sep · 3 days": "📅 15.–18. Sep · 3 Tage",
+"📅 2 weeks": "📅 2 Wochen",
+"📅 Fri–Mon · 4 days": "📅 Fr–Mo · 4 Tage",
+"📅 Fri–Sun · 3 days": "📅 Fr–So · 3 Tage",
+"📅 Sat · 1 day": "📅 Sa · 1 Tag",
+"📅 Sat–Sun · 2 days": "📅 Sa–So · 2 Tage",
+"📅 Thu · 1 day": "📅 Do · 1 Tag",
+"📅 Wed–Thu · 2 days": "📅 Mi–Do · 2 Tage",
+"📍 Mitte / Wedding": "📍 Mitte / Wedding",
+"📍 Steglitz / Dahlem": "📍 Steglitz / Dahlem",
+"📍 near campus": "📍 nahe dem Campus",
+"📍 within 3 km": "📍 im Umkreis von 3 km",
+"📖 any edition": "📖 jede Ausgabe",
+"📚 Textbooks": "📚 Lehrbücher",
+"📦 10 items shared": "📦 10 Artikel geteilt",
+"📷 Cameras": "📷 Kameras",
+"🔊 practice amp": "🔊 Übungsverstärker",
+"🔒 lock needed": "🔒 Schloss nötig",
+"🔥 12‑day return streak": "🔥 12‑Tage‑Rückgabeserie",
+"🔥 6-week lending streak": "🔥 6‑Wochen‑Verleihserie",
+"🔥 urgent": "🔥 dringend",
+"🚚 can pick up": "🚚 kann abholen",
+"🛹 Sports & boards": "🛹 Sport & Boards",
+"🧮 Calculators": "🧮 Taschenrechner",
+"🧺 Dorm life": "🧺 Wohnheim"
+};</script>
+<script>
+/* ============================================================================
+   Mazingo — runtime English/German layer.
+   ----------------------------------------------------------------------------
+   The prototype renders a lot of its content from JavaScript (cards, calendar,
+   inbox, offer summaries), so annotating the markup with data-i18n keys would
+   only ever cover the static half. Instead this walks text nodes and a short
+   list of user-visible attributes, looks each string up, and re-runs itself
+   through a MutationObserver whenever the app injects new DOM.
+
+   Every translated node keeps its English original, so switching back is a
+   restore rather than a reverse-translation — no drift, no double-translation.
+   ========================================================================== */
+(function(){
+  var KEY = 'mazingo-lang';
+  var DICT = window.__MZ_DE__ || {};
+  delete window.__MZ_DE__;
+
+  var MONTHS = {
+    January:'Januar', February:'Februar', March:'März', April:'April',
+    May:'Mai', June:'Juni', July:'Juli', August:'August',
+    September:'September', October:'Oktober', November:'November', December:'Dezember'
+  };
+
+  function num(s){ return String(s).replace('.', ','); }
+  function days(n){ return n + (String(n) === '1' ? ' Tag' : ' Tage'); }
+
+  /* Patterns for strings the app composes at runtime, where an exact
+     dictionary entry can't exist because the numbers vary. */
+  var RULES = [
+    [/^(\d+) items? near (.+)$/,        function(m){ return m[1]+' Artikel in der Nähe von '+m[2]; }],
+    [/^(\d+) items?$/,                  function(m){ return m[1]+' Artikel'; }],
+    [/^(\d+) wish(?:es)?$/,             function(m){ return m[1]+(m[1]==='1'?' Wunsch':' Wünsche'); }],
+    [/^(\d+) days?$/,                   function(m){ return days(m[1]); }],
+    [/^Photo (\d+) of (\d+)$/,          function(m){ return 'Foto '+m[1]+' von '+m[2]; }],
+    [/^(January|February|March|April|May|June|July|August|September|October|November|December) (\d{4})$/,
+                                        function(m){ return MONTHS[m[1]]+' '+m[2]; }],
+    [/^You offered €([\d.,]+)\/day for (\d+) days? on (.+) — €([\d.,]+) plus a €([\d.,]+) refundable deposit\. The lender usually replies within a few hours\.$/,
+      function(m){ return 'Du hast '+num(m[1])+' €/Tag für '+days(m[2])+' für '+m[3]+' geboten — '+num(m[4])+
+                          ' € plus '+num(m[5])+' € erstattbare Kaution. Die verleihende Person antwortet meist innerhalb weniger Stunden.'; }],
+    [/^I’d like to borrow the (.+) for (\d+) days? — €([\d.,]+) total plus a €([\d.,]+) refundable deposit\.( This is my own offer, feel free to counter\.)?$/,
+      function(m){ return 'Ich würde gerne '+m[1]+' für '+days(m[2])+' leihen — '+num(m[3])+
+                          ' € gesamt plus '+num(m[4])+' € erstattbare Kaution.'+
+                          (m[5] ? ' Das ist mein eigenes Angebot, gerne ein Gegenangebot.' : ''); }],
+    [/^€([\d.,]+)\/day · (\d+) days?$/, function(m){ return num(m[1])+' €/Tag · '+days(m[2]); }],
+    [/^€([\d.,]+)\/day$/,               function(m){ return num(m[1])+' €/Tag'; }],
+    // German writes the symbol after the amount: €9 -> 9 €
+    [/^€([\d.,]+)$/,                    function(m){ return num(m[1])+' €'; }],
+    [/^€([\d.,]+) total$/,              function(m){ return num(m[1])+' € gesamt'; }],
+    [/^Deposit €([\d.,]+)$/,            function(m){ return 'Kaution '+num(m[1])+' €'; }],
+    [/^€([\d.,]+) bounty$/,             function(m){ return num(m[1])+' € Belohnung'; }],
+    [/^(.+) · ★([\d.,]+) · deposit €([\d.,]+)$/,
+                                        function(m){ return m[1]+' · ★'+num(m[2])+' · Kaution '+num(m[3])+' €'; }],
+    [/^Lent to (.+)$/,                  function(m){ return 'Verliehen an '+m[1]; }],
+    [/^From (.+)$/,                     function(m){ return 'Von '+m[1]; }],
+    [/^(.+) photo (\d+)$/,              function(m){ return m[1]+' Foto '+m[2]; }],
+    [/^You: (.+)$/,                     function(m){ return 'Du: '+translateString(m[1]); }],
+    [/^(\d+)m$/,                        function(m){ return m[1]+' Min.'; }],
+    [/^(\d+)h$/,                        function(m){ return m[1]+' Std.'; }],
+    [/^(\d+)d$/,                        function(m){ return m[1]+' T.'; }]
+  ];
+
+  /* Look up one trimmed string. Returns null when there's no translation,
+     which leaves the node untouched (proper nouns, prices, names). */
+  function translateString(s){
+    if (!s) return null;
+    var hit = DICT[s];
+    if (hit) return hit;
+    // Some markup uses NBSP where the dictionary key has a plain space.
+    var flat = s.replace(/\u00a0/g, ' ');
+    if (DICT[flat]) return DICT[flat];
+    for (var i = 0; i < RULES.length; i++){
+      var m = flat.match(RULES[i][0]);
+      if (m){
+        var out = RULES[i][1](m);
+        if (out != null) return out;
+      }
+    }
+    return null;
+  }
+
+  var ATTRS = ['placeholder', 'aria-label', 'title', 'alt'];
+  var SKIP  = { SCRIPT:1, STYLE:1, NOSCRIPT:1, TEXTAREA:0, svg:1, SVG:1 };
+
+  var lang = 'en';
+  var applying = false;
+  var originals = new WeakMap();   // element -> { attr: englishValue }
+
+  function skippable(node){
+    var p = node.parentNode;
+    while (p && p.nodeType === 1){
+      if (SKIP[p.nodeName] || p.nodeName === 'svg') return true;
+      p = p.parentNode;
+    }
+    return false;
+  }
+
+  function doText(node){
+    var raw = node.__mzEn;
+    if (raw === undefined) raw = node.nodeValue;
+    if (lang === 'de'){
+      var trimmed = raw.replace(/^\s+|\s+$/g, '');
+      if (!trimmed) return;
+      var t = translateString(trimmed);
+      if (t == null) return;
+      node.__mzEn = raw;
+      // keep the original leading/trailing whitespace so inline layout holds
+      var next = raw.match(/^\s*/)[0] + t + raw.match(/\s*$/)[0];
+      // Writing unconditionally queues another characterData mutation, which
+      // re-enters this function and loops forever. Only write on change.
+      if (node.nodeValue !== next) node.nodeValue = next;
+    } else if (node.__mzEn !== undefined){
+      if (node.nodeValue !== node.__mzEn) node.nodeValue = node.__mzEn;
+      delete node.__mzEn;
+    }
+  }
+
+  function doAttrs(el){
+    var store = originals.get(el);
+    for (var i = 0; i < ATTRS.length; i++){
+      var a = ATTRS[i];
+      if (lang === 'de'){
+        if (!el.hasAttribute(a)) continue;
+        var cur = (store && store[a] !== undefined) ? store[a] : el.getAttribute(a);
+        var t = translateString(cur.replace(/^\s+|\s+$/g, ''));
+        if (t == null) continue;
+        if (!store){ store = {}; originals.set(el, store); }
+        if (store[a] === undefined) store[a] = cur;
+        if (el.getAttribute(a) !== t) el.setAttribute(a, t);   // idempotent
+      } else if (store && store[a] !== undefined){
+        if (el.getAttribute(a) !== store[a]) el.setAttribute(a, store[a]);
+        delete store[a];
+      }
+    }
+  }
+
+  function walk(root){
+    if (!root) return;
+    if (root.nodeType === 3){ if (!skippable(root)) doText(root); return; }
+    if (root.nodeType !== 1) return;
+    if (SKIP[root.nodeName] || root.nodeName === 'svg') return;
+
+    doAttrs(root);
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n){
+        return skippable(n) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    var batch = [], n;
+    while ((n = tw.nextNode())) batch.push(n);
+    batch.forEach(doText);
+
+    var els = root.querySelectorAll('[placeholder],[aria-label],[title],[alt]');
+    for (var i = 0; i < els.length; i++) doAttrs(els[i]);
+  }
+
+  function applyAll(){
+    applying = true;
+    walk(document.body);
+    document.documentElement.setAttribute('lang', lang === 'de' ? 'de' : 'en');
+    var label = document.getElementById('langToggleLabel');
+    if (label){
+      label.textContent = lang === 'de'
+        ? 'Die ganze Seite auf Deutsch'
+        : 'Switch the whole site to German';
+    }
+    applying = false;
+  }
+
+  function setLang(next, persist){
+    if (next === lang) return;
+    lang = next;
+    applyAll();
+    if (persist){ try{ localStorage.setItem(KEY, lang); }catch(e){} }
+  }
+
+  /* Re-translate anything the app renders after the initial pass. */
+  var observer = new MutationObserver(function(muts){
+    if (applying || lang !== 'de') return;
+    applying = true;
+    for (var i = 0; i < muts.length; i++){
+      var m = muts[i];
+      if (m.type === 'characterData'){
+        if (!skippable(m.target)) doText(m.target);
+      } else {
+        for (var j = 0; j < m.addedNodes.length; j++) walk(m.addedNodes[j]);
+        if (m.type === 'attributes' && m.target.nodeType === 1) doAttrs(m.target);
+      }
+    }
+    applying = false;
+  });
+
+  function init(){
+    try{ if (localStorage.getItem(KEY) === 'de') lang = 'de'; }catch(e){}
+
+    var box = document.getElementById('langToggle');
+    if (box){
+      box.checked = (lang === 'de');
+      box.addEventListener('change', function(){
+        setLang(box.checked ? 'de' : 'en', true);
+      });
+    }
+
+    if (lang === 'de') applyAll();
+    else {
+      var l = document.getElementById('langToggleLabel');
+      if (l) l.textContent = 'Switch the whole site to German';
+    }
+
+    observer.observe(document.body, {
+      childList: true, subtree: true, characterData: true,
+      attributes: true, attributeFilter: ATTRS
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+  window.mazingoSetLanguage = function(l){ setLang(l === 'de' ? 'de' : 'en', true); };
+})();
+
 </script>
 
 </body>
