@@ -398,6 +398,15 @@
     background-position: 0% 50%; color: var(--ink); }
   .hero-ctas .hero-cta-board:hover{ background-position: 100% 50%; color: var(--ink); }
   .hero-ctas .hero-cta-bounty:hover{ background-position: 100% 50%; color: var(--ink); }
+  .hero-ctas .hero-cta-demo{
+    background: transparent;
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease, color .2s ease;
+  }
+  .hero-ctas .hero-cta-demo:hover{ background: var(--ink); color: var(--paper); }
+  @media (prefers-reduced-motion: reduce){ .hero-ctas .hero-cta-demo{ transition: none; } }
   .trust-row{
     display:flex;
     align-items:center;
@@ -2161,6 +2170,7 @@ Buy never.</span></h1>
       <div class="hero-ctas">
         <a href="#" data-target="browse" class="btn btn-lg hero-cta hero-cta-board">BOARD</a>
         <a href="#" data-target="bounty" class="btn btn-lg hero-cta hero-cta-bounty">BOUNTY</a>
+        <a href="demo/" class="btn btn-lg hero-cta hero-cta-demo" aria-label="Open the Mazingo mobile demo">DEMO</a>
       </div>
       <div class="trust-row">
         <div class="avatars">
