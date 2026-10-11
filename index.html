@@ -3,25 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0F1117">
-<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#F0F2F4">
+<meta name="color-scheme" content="light dark">
 <meta name="supported-color-schemes" content="dark light">
 <title>Mazingo — Borrow first. 
 </title>
-<style>html{background:#0F1117;color-scheme:dark}html[data-theme="light"]{background:#F0F2F4;color-scheme:light}</style>
+<style>html{background:#F0F2F4;color-scheme:light}html[data-theme="dark"]{background:#0F1117;color-scheme:dark}</style>
 <script>
 /* Runs before the first stylesheet is parsed, so Safari never paints a white
    frame: the <style> above has already set the canvas, and this only corrects
    it when the user has opted into light. */
 (function(){
-  var t = 'dark';
-  try{
-    if (localStorage.getItem('mazingo-theme') === 'light') t = 'light';
-  }catch(e){}
+  /* Always start in light mode on every load. A saved dark choice is ignored;
+     the Settings switch still works for the current visit. */
+  var t = 'light';
   var de = document.documentElement;
   de.setAttribute('data-theme', t);
-  de.style.background = t === 'light' ? '#F0F2F4' : '#0F1117';
-  de.style.colorScheme = t;
+  de.style.background = '#F0F2F4';
+  de.style.colorScheme = 'light';
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
